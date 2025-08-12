@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.19">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TravelBlogs.Core\TravelBlogs.Core.Application\TravelBlogs.Core.Application.csproj" />
+    <ProjectReference Include="..\..\TravelBlogs.Core\TravelBlogs.Core.Domain\TravelBlogs.Core.Domain.csproj" />
+    <ProjectReference Include="..\TravelBlogs.Infrastructure.Persistences\TravelBlogs.Infrastructure.Persistences.csproj" />
+  </ItemGroup>
+
+</Project>
