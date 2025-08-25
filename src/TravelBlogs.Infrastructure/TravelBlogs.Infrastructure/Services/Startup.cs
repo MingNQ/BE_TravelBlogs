@@ -14,6 +14,7 @@ public static class Startup
         services.AddTransient<IPaginationService, PaginationService>();
         services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<ISyncService, SyncService>();
 
         return services;
     }

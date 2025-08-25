@@ -7,6 +7,7 @@ using System.Reflection;
 using TravelBlogs.Core.Application.Common;
 using TravelBlogs.Infrastructure.Auth;
 using TravelBlogs.Infrastructure.Cors;
+using TravelBlogs.Infrastructure.ExternalService;
 using TravelBlogs.Infrastructure.Persistences;
 using TravelBlogs.Infrastructure.Persistences.Context;
 using TravelBlogs.Infrastructure.Persistences.Initialization;
@@ -29,6 +30,7 @@ public static class Startup
             .AddPersistences()
             .AddRouting(options => options.LowercaseUrls = true)
             .AddServices()
+            .AddExternalService()
             .AddRegisterService();
     }
 
