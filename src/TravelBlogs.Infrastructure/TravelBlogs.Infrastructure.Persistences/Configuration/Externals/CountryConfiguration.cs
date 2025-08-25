@@ -10,7 +10,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
     {
         builder.ToTable("Countries", SchemaNames.External);
 
-        builder.HasMany(x => x.Destinations)
+        builder.HasMany(x => x.Cities)
             .WithOne(d => d.Country)
             .HasForeignKey(d => d.CountryId)
             .OnDelete(DeleteBehavior.Cascade);

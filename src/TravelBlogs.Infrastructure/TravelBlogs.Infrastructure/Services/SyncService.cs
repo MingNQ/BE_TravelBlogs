@@ -15,16 +15,19 @@ public class SyncService(IExternalEnpointClient externalEnpointClient, IUnitOfWo
     {
         var countries = await externalEnpointClient.GetAllCountries();
 
-        foreach (var country in countries.Values)
+        foreach (var country in countries)
         {
             var existingCountry = await _countryRepository.GetFirstOrDefaultAsync(predicate: c => c.Id == country.Id);
             if (existingCountry == null)
             {
-                await _countryRepository.InsertAsync(Country.Create(country.Name), cancellationToken);
+                var newCountry = Country.Create(country.Country, country.Iso2, country.Iso3);
+                newCountry.AddDestinations(country.Cities);
+                await _countryRepository.InsertAsync(newCountry, cancellationToken);
             }
             else
             {
-                existingCountry.Name = country.Name;
+                existingCountry.Update(country.Country, country.Iso2, country.Iso3);
+                existingCountry.UpdateDestinations(country.Cities);
                 _countryRepository.Update(existingCountry);
             }
         }

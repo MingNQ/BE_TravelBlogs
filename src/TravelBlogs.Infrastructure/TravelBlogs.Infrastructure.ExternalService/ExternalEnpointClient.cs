@@ -12,11 +12,12 @@ public class ExternalEnpointClient(HttpClient httpClient, IOptions<ExternalUriSe
     private readonly HttpClient _httpClient = httpClient;
     private readonly ExternalUriSettings _externalUriSettings = options.Value;
 
-    public async Task<Dictionary<long, CountryDto>> GetAllCountries()
+    public async Task<List<CountryDto>> GetAllCountries()
     {
         var response = await _httpClient.GetStringAsync(_externalUriSettings.CountriesEndpoint);
-        var countries = JsonSerializer.Deserialize<Dictionary<long, CountryDto>>(response);
+        var countries = JsonSerializer.Deserialize<CountryReponse>(response
+            , new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-        return countries ?? [];
+        return countries?.Data ?? [];
     }
 }

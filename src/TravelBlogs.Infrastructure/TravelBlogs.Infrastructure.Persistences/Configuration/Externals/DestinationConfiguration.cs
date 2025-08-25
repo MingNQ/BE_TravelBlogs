@@ -12,7 +12,7 @@ public class DestinationConfiguration : IEntityTypeConfiguration<Destination>
 
         builder
             .HasOne(d => d.Country)
-            .WithMany(c => c.Destinations)
+            .WithMany(c => c.Cities)
             .HasForeignKey(d => d.CountryId)
             .OnDelete(DeleteBehavior.Cascade);
     }

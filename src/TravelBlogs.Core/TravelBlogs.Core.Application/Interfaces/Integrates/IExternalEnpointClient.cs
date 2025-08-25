@@ -4,5 +4,5 @@ namespace TravelBlogs.Core.Application.Interfaces.Integrates;
 
 public interface IExternalEnpointClient
 {
-    Task<Dictionary<long, CountryDto>> GetAllCountries();
+    Task<List<CountryDto>> GetAllCountries();
 }
