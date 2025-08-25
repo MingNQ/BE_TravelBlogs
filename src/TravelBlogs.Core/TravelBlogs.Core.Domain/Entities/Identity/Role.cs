@@ -15,4 +15,10 @@ public class Role : AuditableEntity<long>
             NormalizedName = name.ToUpperInvariant()
         };
     }
+
+    public void Update(string name)
+    {
+        Name = name;
+        NormalizedName = name.ToUpperInvariant();
+    }
 }
