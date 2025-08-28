@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelBlogs.Infrastructure.Persistences.Context;
 
@@ -11,9 +12,11 @@ using TravelBlogs.Infrastructure.Persistences.Context;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250826141214_AddFaqEntity")]
+    partial class AddFaqEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,14 +153,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.Property<DateTimeOffset?>("DeletedOn")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Iso2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Iso3")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("LastModifiedBy")
                         .HasColumnType("bigint");
@@ -548,7 +543,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Destination", b =>
                 {
                     b.HasOne("TravelBlogs.Core.Domain.Entities.Geo.Country", "Country")
-                        .WithMany("Cities")
+                        .WithMany("Destinations")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -596,7 +591,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Country", b =>
                 {
-                    b.Navigation("Cities");
+                    b.Navigation("Destinations");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.User", b =>

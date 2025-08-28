@@ -18,6 +18,7 @@ public class ApplicationDbContext(
     #region Common
 
     public DbSet<FileStorage> FileStorages => Set<FileStorage>();
+    public DbSet<Faq> FAQs => Set<Faq>();
 
     #endregion Common
 
