@@ -6,18 +6,18 @@ using TravelBlogs.Core.Application.Common.Services;
 using TravelBlogs.Core.Application.Cqrs.Faqs.Params;
 using TravelBlogs.Core.Application.Cqrs.Faqs.Specs;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Faq;
-using TravelBlogs.Core.Domain.Entities.Identity;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 
 namespace TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 
-public class GetFaqByConditionQuery : SearchFaqParam, IRequest<ResponseBase<PaginationResponse<FaqDto>>>;
+public class GetFaqByConditionQuery : SearchFaqParam, IRequest<PaginationResponse<FaqDto>>;
 
 public class GetFaqByConditionQueryHandler(
     IReadRepository<Faq> repo,
     IPaginationService paginationService)
-    : IRequestHandler<GetFaqByConditionQuery, ResponseBase<PaginationResponse<FaqDto>>>
+    : IRequestHandler<GetFaqByConditionQuery, PaginationResponse<FaqDto>>
 {
-    public async Task<ResponseBase<PaginationResponse<FaqDto>>> Handle(GetFaqByConditionQuery request, CancellationToken ct)
+    public async Task<PaginationResponse<FaqDto>> Handle(GetFaqByConditionQuery request, CancellationToken ct)
     {
         var spec = new FaqByConditionSpec(request);
         var result = await paginationService.PaginatedListAsync(
@@ -27,6 +27,6 @@ public class GetFaqByConditionQueryHandler(
             request.PageSize,
             ct);
 
-        return new ResponseBase<PaginationResponse<FaqDto>>(result);
+        return result;
     }
 }

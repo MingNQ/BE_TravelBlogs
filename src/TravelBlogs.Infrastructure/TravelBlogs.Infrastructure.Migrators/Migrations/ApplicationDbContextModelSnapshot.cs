@@ -22,49 +22,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.Faq", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Question");
-
-                    b.ToTable("FAQs");
-                });
-
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>
                 {
                     b.Property<long>("Id")
@@ -212,6 +169,49 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Destinations", "External");
+                });
+
+            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Faq", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<long>("LastModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Question");
+
+                    b.ToTable("Faqs", "Catalog");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Role", b =>
@@ -504,7 +504,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserVerifications");
+                    b.ToTable("UserVerifications", "Identity");
                 });
 
             modelBuilder.Entity("TravelBlogs.Infrastructure.Persistences.Auditing.Trail", b =>

@@ -20,6 +20,3 @@ public class FaqValidatorBase<T> : AbstractValidator<T> where T : FaqBaseCommand
 			.WithMessage("Answer must not exceed 4000 characters.");
 	}
 }
-
-
-

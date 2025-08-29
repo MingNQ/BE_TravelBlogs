@@ -12,6 +12,3 @@ public class UpdateFaqValidator : FaqValidatorBase<UpdateFaqCommand>
 			.WithMessage("Faq ID must be greater than 0");
 	}
 }
-
-
-

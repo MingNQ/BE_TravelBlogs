@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TravelBlogs.Core.Application.Common.Interfaces;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 using TravelBlogs.Core.Domain.Entities.Common;
 using TravelBlogs.Core.Domain.Entities.Geo;
 using TravelBlogs.Core.Domain.Entities.Identity;
