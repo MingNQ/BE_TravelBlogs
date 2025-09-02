@@ -1,0 +1,5 @@
+using TravelBlogs.Core.Application.Cqrs.ContactsInformation.Commands;
+
+namespace TravelBlogs.Core.Application.Cqrs.ContactsInformation.Validators;
+
+public class CreateContactInformationValidator : ContactInformationValidatorBase<CreateContactInformationCommand>;

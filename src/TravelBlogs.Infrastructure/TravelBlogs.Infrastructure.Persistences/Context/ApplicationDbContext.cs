@@ -19,7 +19,6 @@ public class ApplicationDbContext(
     #region Common
 
     public DbSet<FileStorage> FileStorages => Set<FileStorage>();
-    public DbSet<Faq> FAQs => Set<Faq>();
 
     #endregion Common
 
@@ -37,6 +36,11 @@ public class ApplicationDbContext(
     public DbSet<Country> Countries => Set<Country>(); 
     public DbSet<Destination> Destinations => Set<Destination>();
     #endregion
+
+    #region Catalog
+    public DbSet<Faq> FAQs => Set<Faq>();
+    public DbSet<ContactInformation> ContactsInformation => Set<ContactInformation>();
+    #endregion Catalog
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 

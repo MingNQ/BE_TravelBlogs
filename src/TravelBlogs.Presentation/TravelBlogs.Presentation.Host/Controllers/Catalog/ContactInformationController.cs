@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TravelBlogs.Core.Application.Cqrs.Faqs.Commands;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using TravelBlogs.Core.Application.Cqrs.ContactsInformation.Commands;
+using TravelBlogs.Core.Application.Cqrs.ContactsInformation.Queries;
 using TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.Catalog;
 
-public class FaqsController : BaseAuthController
+[ControllerName("contact-information")]
+[Tags("Contact Information")]
+public class ContactInformationController : BaseAuthController
 {
     [HttpPost("search")]
     public async Task<IActionResult> SearchAsync([FromBody] GetFaqByConditionQuery request)
@@ -16,7 +20,7 @@ public class FaqsController : BaseAuthController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync([FromBody] CreateFaqCommand request)
+    public async Task<IActionResult> CreateAsync([FromBody] CreateContactInformationCommand request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.CreateSuccess);
@@ -25,12 +29,20 @@ public class FaqsController : BaseAuthController
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetByIdAsync(long id)
     {
-        var result = await Mediator.Send(new GetFaqByIdQuery { Id = id });
+        var result = await Mediator.Send(new GetContactInformationByIdQuery { Id = id });
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UpdateFaqCommand request)
+    public async Task<IActionResult> UpdateAsync(long id, [FromBody] UpdateContactInformationCommand request)
+    {
+        request.SetId(id);
+        var result = await Mediator.Send(request);
+        return Ok(result, MessageCommon.UpdateSuccess);
+    }
+
+    [HttpPut("{id:long}/set-default")]
+    public async Task<IActionResult> UpdateDefaultAsync(long id, SetContactInformationDefaultCommand request)
     {
         request.SetId(id);
         var result = await Mediator.Send(request);
@@ -40,7 +52,9 @@ public class FaqsController : BaseAuthController
     [HttpDelete("{id:long}")]
     public async Task<IActionResult> DeleteAsync(long id)
     {
-        var result = await Mediator.Send(new DeleteFaqCommand { Id = id });
+        var result = await Mediator.Send(new DeleteContactInformationCommand { Id = id });
         return Ok(result, MessageCommon.DeleteSuccess);
     }
+
+    
 }
