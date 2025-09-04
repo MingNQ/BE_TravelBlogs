@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelBlogs.Infrastructure.Persistences.Context;
 
@@ -11,9 +12,11 @@ using TravelBlogs.Infrastructure.Persistences.Context;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250902213254_addContact")]
+    partial class addContact
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,14 +297,14 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<long>("UserId")
+                    b.Property<long>("userId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Subject");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Contacts");
                 });
@@ -650,13 +653,13 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Contact", b =>
                 {
-                    b.HasOne("TravelBlogs.Core.Domain.Entities.Identity.User", "User")
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Identity.User", "user")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.TokenRefresh", b =>

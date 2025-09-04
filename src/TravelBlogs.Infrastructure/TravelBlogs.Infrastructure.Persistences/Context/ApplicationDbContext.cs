@@ -19,6 +19,7 @@ public class ApplicationDbContext(
     #region Common
 
     public DbSet<FileStorage> FileStorages => Set<FileStorage>();
+    public DbSet<Contact> Contacts => Set<Contact>();
 
     #endregion Common
 
