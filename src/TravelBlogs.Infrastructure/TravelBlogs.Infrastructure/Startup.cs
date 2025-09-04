@@ -1,10 +1,12 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TravelBlogs.Core.Application.Common;
+using TravelBlogs.Core.Application.Common.Interfaces;
 using TravelBlogs.Infrastructure.Auth;
 using TravelBlogs.Infrastructure.Cors;
 using TravelBlogs.Infrastructure.Persistences;
@@ -19,12 +21,21 @@ public static class Startup
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
+        var connectionString = config.GetConnectionString("DefaultConnection");
+
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
+
+
+        services.AddScoped<IApplicationDbContext>(provider =>
+            provider.GetRequiredService<ApplicationDbContext>());
+
         return services
             .AddApiVersioning()
             .AddAuth(config)
             .AddUnitOfWork<ApplicationDbContext>()
             .AddCustomRepository()
-            //.AddCorsPolicy(config)
             .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
             .AddPersistences()
             .AddRouting(options => options.LowercaseUrls = true)
