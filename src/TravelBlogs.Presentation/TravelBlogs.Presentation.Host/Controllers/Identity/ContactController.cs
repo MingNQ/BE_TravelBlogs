@@ -39,7 +39,7 @@ namespace TravelBlogs.Presentation.Host.Controllers.Identity
         [HttpDelete("{id:long}")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
-            var result = await Mediator.Send(new DeleteContactCommand { id = id });
+            var result = await Mediator.Send(new DeleteContactCommand { Id = id });
             return Ok(result, MessageCommon.DeleteSuccess);
         }
     }

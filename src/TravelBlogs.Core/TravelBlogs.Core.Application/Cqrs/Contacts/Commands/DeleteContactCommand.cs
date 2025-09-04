@@ -16,20 +16,20 @@ namespace TravelBlogs.Core.Application.Cqrs.Contacts.Commands
 {
     public class DeleteContactCommand : IRequest<long>
     {
-        public long id { get; set; }
+        public long Id { get; set; }
     }
     public class DeleteContactCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<DeleteContactCommand, long>
     {
-        private readonly IWriteRepository<Contact> _repository = unitOfWork.GetRepository<Contact>();
+        private readonly IWriteRepository<Contact> _contactRepository = unitOfWork.GetRepository<Contact>();
         public async Task<long> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _repository.GetFirstOrDefaultAsync(
-                predicate: x => x.Id == request.id,
+            var entity = await _contactRepository.GetFirstOrDefaultAsync(
+                predicate: x => x.Id == request.Id,
                 disableTracking: false)
-                ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Contact),request.id));
+                ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Contact),request.Id));
 
-            _repository.Delete(entity);
-            unitOfWork.SaveChangesAsync();
+            _contactRepository.Delete(entity);
+            await unitOfWork.SaveChangesAsync();
             return entity.Id;
         }
 

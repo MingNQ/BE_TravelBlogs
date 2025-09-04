@@ -28,15 +28,15 @@ namespace TravelBlogs.Core.Application.Cqrs.Contacts.Commands
     public class UpdateContactCommandHandler(IUnitOfWork unitOfWork) : IRequestHandler<UpdateContactCommand, ResponseBase<ContactDto>>
     {
 
-        private readonly IWriteRepository<Contact> _repo = unitOfWork.GetRepository<Contact>();
+        private readonly IWriteRepository<Contact> _contactRepo = unitOfWork.GetRepository<Contact>();
         public async Task<ResponseBase<ContactDto>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _repo.GetFirstOrDefaultAsync(
+            var entity = await _contactRepo.GetFirstOrDefaultAsync(
                 predicate: x => x.Id == request.Id,
                 disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Contact), request.Id));
             entity.Update(request.Subject, request.Content);
-            _repo.Update(entity);
+            _contactRepo.Update(entity);
             await unitOfWork.SaveChangesAsync();
             return new ResponseBase<ContactDto>(entity.Adapt<ContactDto>(),MessageCommon.UpdateSuccess);
         }
