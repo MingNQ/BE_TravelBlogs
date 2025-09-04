@@ -7,7 +7,7 @@ using TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
-namespace TravelBlogs.Presentation.Host.Controllers.Identity
+namespace TravelBlogs.Presentation.Host.Controllers.Catalog
 {
     public class ContactController : BaseAuthController
     {

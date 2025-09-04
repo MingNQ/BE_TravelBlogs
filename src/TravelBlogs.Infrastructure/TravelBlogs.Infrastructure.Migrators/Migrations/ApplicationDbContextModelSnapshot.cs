@@ -303,7 +303,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Contacts", "Catalog");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Role", b =>

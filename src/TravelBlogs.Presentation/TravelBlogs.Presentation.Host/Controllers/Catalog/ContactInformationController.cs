@@ -55,6 +55,4 @@ public class ContactInformationController : BaseAuthController
         var result = await Mediator.Send(new DeleteContactInformationCommand { Id = id });
         return Ok(result, MessageCommon.DeleteSuccess);
     }
-
-    
 }

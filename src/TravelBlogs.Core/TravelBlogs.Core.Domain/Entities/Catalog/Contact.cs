@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TravelBlogs.Core.Domain.Common.Contracts;
+using TravelBlogs.Core.Domain.Entities.Identity;
 
-namespace TravelBlogs.Core.Domain.Entities.Identity
+namespace TravelBlogs.Core.Domain.Entities.Catalog
 {
     public class Contact : AuditableEntity<long>
     {
@@ -20,7 +21,7 @@ namespace TravelBlogs.Core.Domain.Entities.Identity
         public long UserId { get; set; }
         public User? User { get; set; }
         private Contact() { }
-        public void Update(String subject, String content)
+        public void Update(string subject, string content)
         {
             Subject = subject;
             Content = content;

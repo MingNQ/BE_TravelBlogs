@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TravelBlogs.Core.Domain.Entities.Identity;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 
-namespace TravelBlogs.Infrastructure.Persistences.Configuration.Identity
+namespace TravelBlogs.Infrastructure.Persistences.Configuration.Catalog
 {
     public class ContactConfiguration : IEntityTypeConfiguration<Contact>
     {
