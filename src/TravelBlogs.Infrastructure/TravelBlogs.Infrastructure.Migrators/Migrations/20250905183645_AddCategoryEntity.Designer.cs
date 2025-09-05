@@ -12,7 +12,7 @@ using TravelBlogs.Infrastructure.Persistences.Context;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250904120800_AddCategoryEntity")]
+    [Migration("20250905183645_AddCategoryEntity")]
     partial class AddCategoryEntity
     {
         /// <inheritdoc />
@@ -53,11 +53,12 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>

@@ -1,44 +1,29 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using TravelBlogs.Core.Application.Common.Interfaces;
+﻿using Mapster;
+using MediatR;
+using TravelBlogs.Core.Application.Common.Repositories;
+using TravelBlogs.Core.Application.Common.Responses;
+using TravelBlogs.Core.Application.Common.UnitOfWork;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Categories;
 using TravelBlogs.Core.Domain.Entities;
+using TravelBlogs.Core.Shared.Constants;
 
-namespace TravelBlogs.Core.Application.Cqrs.Categories.Commands
+namespace TravelBlogs.Core.Application.Cqrs.Categories.Commands;
+
+public class CreateCategoryCommand : IRequest<ResponseBase<CategoryDto>>
 {
-    public class CreateCategoryCommand : IRequest<CategoryDto>
+    public string Name { get; set; } = string.Empty;
+}
+
+public class CreateCategoryCommandHandler(IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateCategoryCommand, ResponseBase<CategoryDto>>
+{
+    private readonly IWriteRepository<Category> _repo = unitOfWork.GetRepository<Category>();
+
+    public async Task<ResponseBase<CategoryDto>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        public string Name { get; set; } = string.Empty;
-    }
-
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryDto>
-    {
-        private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper; // Cần IMapper ở đây
-
-        public CreateCategoryCommandHandler(IApplicationDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        public async Task<CategoryDto> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
-        {
-            var category = new Category
-            {
-                Name = request.Name,
-            };
-
-            await _context.Categories.AddAsync(category, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            // Map entity vừa tạo sang DTO để trả về
-            return _mapper.Map<CategoryDto>(category);
-        }
+        var category = new Category { Name = request.Name };
+        var newCategory = await _repo.InsertAsync(category, cancellationToken);
+        await unitOfWork.SaveChangesAsync();
+        return new ResponseBase<CategoryDto>(newCategory.Adapt<CategoryDto>(), MessageCommon.CreateSuccess);
     }
 }

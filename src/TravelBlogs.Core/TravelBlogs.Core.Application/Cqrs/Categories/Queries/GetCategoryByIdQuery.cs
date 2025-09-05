@@ -1,35 +1,29 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using TravelBlogs.Core.Application.Common.Interfaces;
-using TravelBlogs.Core.Application.Dto;
+using Mapster;
+using TravelBlogs.Core.Application.Common.Exceptions;
+using TravelBlogs.Core.Application.Common.Repositories;
+using TravelBlogs.Core.Application.Common.Responses;
+using TravelBlogs.Core.Application.Cqrs.Categories.Specs;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Categories;
-using AutoMapper;
+using TravelBlogs.Core.Domain.Entities;
+using TravelBlogs.Core.Shared.Constants;
+using TravelBlogs.Core.Application.Common.Persistences;
+
 namespace TravelBlogs.Core.Application.Cqrs.Categories.Queries;
 
-public class GetCategoryByIdQuery : IRequest<CategoryDto>
+public class GetCategoryByIdQuery : IRequest<ResponseBase<CategoryDto>>
 {
     public long Id { get; set; }
 }
 
-public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryDto>
+public class GetCategoryByIdQueryHandler(IReadRepository<Category> categoryRepository)
+    : IRequestHandler<GetCategoryByIdQuery, ResponseBase<CategoryDto>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetCategoryByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public async Task<ResponseBase<CategoryDto>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        _context = context;
-        _mapper = mapper;
-    }
+        var category = await categoryRepository.FirstOrDefaultAsync(new CategoryByIdSpec(request.Id), cancellationToken)
+                    ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Category), request.Id));
 
-    public async Task<CategoryDto> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
-    {
-        var category = await _context.Categories
-            .AsNoTracking() // Dùng AsNoTracking để tăng hiệu suất vì đây là lệnh chỉ đọc
-            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken);
-
-        // Cần thêm xử lý nếu không tìm thấy category, ví dụ: throw new NotFoundException();
-
-        return _mapper.Map<CategoryDto>(category);
+        return new ResponseBase<CategoryDto>(category.Adapt<CategoryDto>());
     }
 }
