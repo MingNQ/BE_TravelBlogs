@@ -6,13 +6,17 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCategoryEntity : Migration
+    public partial class AddCategoryTableCorrectly : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "Catalog");
+
             migrationBuilder.CreateTable(
                 name: "Categories",
+                schema: "Catalog",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -35,7 +39,8 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Categories",
+                schema: "Catalog");
         }
     }
 }

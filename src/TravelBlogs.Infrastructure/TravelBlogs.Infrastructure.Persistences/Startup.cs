@@ -20,7 +20,8 @@ public static class Startup
             .BindConfiguration(nameof(DatabaseSettings))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
+       
+        
         return services.AddDbContext<ApplicationDbContext>((p, m) =>
             {
                 var databaseSettings = p.GetRequiredService<IOptions<DatabaseSettings>>().Value;

@@ -21,9 +21,18 @@ public class CreateCategoryCommandHandler(IUnitOfWork unitOfWork)
 
     public async Task<ResponseBase<CategoryDto>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
+        // tạo entities mới 
         var category = new Category { Name = request.Name };
-        var newCategory = await _repo.InsertAsync(category, cancellationToken);
+
+        // thêm vào repository
+        await _repo.InsertAsync(category, cancellationToken);
+
+        // lưu vào database
         await unitOfWork.SaveChangesAsync();
-        return new ResponseBase<CategoryDto>(newCategory.Adapt<CategoryDto>(), MessageCommon.CreateSuccess);
+
+        // map từ biến 'category' gốc sau khi đã được lưu
+        return new ResponseBase<CategoryDto>(
+            category.Adapt<CategoryDto>(),
+            MessageCommon.CreateSuccess);
     }
 }

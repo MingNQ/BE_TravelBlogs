@@ -19,4 +19,8 @@
     <ProjectReference Include="..\TravelBlogs.Core.Shared\TravelBlogs.Core.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dto\Common\" />
+  </ItemGroup>
+
 </Project>

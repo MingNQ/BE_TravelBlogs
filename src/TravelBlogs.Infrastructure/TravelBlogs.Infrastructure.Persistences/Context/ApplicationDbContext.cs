@@ -13,22 +13,22 @@ public class ApplicationDbContext(
     IOptions<DatabaseSettings> dbSettings)
     : BaseDbContext(currentUser,
         serializer,
-        dbSettings), IApplicationDbContext
+        dbSettings)
 {
     #region Common
 
-    public DbSet<FileStorage> FileStorages { get; init; }
-    public DbSet<Category> Categories { get; init; }
+    public DbSet<FileStorage> FileStorages => Set<FileStorage>();
+    public DbSet<Category> Categories => Set<Category>();
 
     #endregion Common
 
     #region Audit
 
-    public DbSet<User> Users { get; init; }
-    public DbSet<TokenRefresh> RefreshTokens { get; init; }
-    public DbSet<UserRole> UserRoles { get; init; }
-    public DbSet<UserVerification> UserVerifications { get; init; }
-    public DbSet<Role> Roles { get; init; }
+    public DbSet<User> Users => Set<User>();
+    public DbSet<TokenRefresh> RefreshTokens => Set<TokenRefresh>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<UserVerification> UserVerifications => Set<UserVerification>();
+    public DbSet<Role> Roles => Set<Role>();
 
     #endregion Audit
 

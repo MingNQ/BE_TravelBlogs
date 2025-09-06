@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace TravelBlogs.Infrastructure.Persistences.Initialization;
 
-internal class DatabaseInitializer(IServiceProvider serviceProvider, ILogger<DatabaseInitializer> logger)
+public class DatabaseInitializer(IServiceProvider serviceProvider, ILogger<DatabaseInitializer> logger)
     : IDatabaseInitializer
 {
     public async Task InitializeDatabasesAsync(CancellationToken cancellationToken)

@@ -12,8 +12,8 @@ using TravelBlogs.Infrastructure.Persistences.Context;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250905183645_AddCategoryEntity")]
-    partial class AddCategoryEntity
+    [Migration("20250906190322_AddCategoryTableCorrectly")]
+    partial class AddCategoryTableCorrectly
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,7 +58,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories", "Catalog");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>

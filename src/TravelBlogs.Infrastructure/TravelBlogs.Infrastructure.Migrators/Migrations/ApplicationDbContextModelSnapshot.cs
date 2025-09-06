@@ -55,7 +55,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories", "Catalog");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>
