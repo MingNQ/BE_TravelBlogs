@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TravelBlogs.Infrastructure.Persistences.Context;
 
@@ -11,9 +12,11 @@ using TravelBlogs.Infrastructure.Persistences.Context;
 namespace TravelBlogs.Infrastructure.Migrators.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250906190322_AddCategoryTableCorrectly")]
+    partial class AddCategoryTableCorrectly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,93 +60,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.ToTable("Categories", "Catalog");
                 });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.ContactInformation", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDefault")
-                        .HasMaxLength(11)
-                        .HasColumnType("bit");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContactsInformation", "Catalog");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.Faq", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Question");
-
-                    b.ToTable("Faqs", "Catalog");
-               });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>
                 {
@@ -209,137 +125,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FileStorages", "Common");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Country", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Iso2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Iso3")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries", "External");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Destination", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CountryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Destinations", "External");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Contact", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<long>("CreatedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long?>("DeletedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("DeletedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<long>("LastModifiedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("LastModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Subject")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Subject");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Contacts", "Catalog");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Role", b =>
@@ -632,7 +417,7 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserVerifications", "Identity");
+                    b.ToTable("UserVerifications");
                 });
 
             modelBuilder.Entity("TravelBlogs.Infrastructure.Persistences.Auditing.Trail", b =>
@@ -673,28 +458,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.ToTable("AuditTrails", "Auditing");
                 });
 
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Destination", b =>
-                {
-                    b.HasOne("TravelBlogs.Core.Domain.Entities.Geo.Country", "Country")
-                        .WithMany("Cities")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.Contact", b =>
-                {
-                    b.HasOne("TravelBlogs.Core.Domain.Entities.Identity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.TokenRefresh", b =>
                 {
                     b.HasOne("TravelBlogs.Core.Domain.Entities.Identity.User", null)
@@ -731,11 +494,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Geo.Country", b =>
-                {
-                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Identity.User", b =>

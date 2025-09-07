@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TravelBlogs.Infrastructure.Persistences.Configuration;
 
-internal static class SchemaNames
+public static class SchemaNames
 {
     // Tracks user activities, audit logs, change history
     public const string Auditing = nameof(Auditing);

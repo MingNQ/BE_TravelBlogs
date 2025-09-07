@@ -69,5 +69,5 @@ public static class Startup
             //.UseCorsPolicy()
             .UseAuthentication()
             .UseCurrentUser()
-            .UseAuthorization(); 
+            .UseAuthorization();
 }

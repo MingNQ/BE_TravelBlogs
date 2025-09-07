@@ -1,4 +1,4 @@
-using Ardalis.Specification;
+﻿using Ardalis.Specification;
 using TravelBlogs.Core.Application.Common.Interfaces;
 using TravelBlogs.Core.Application.Common.Models;
 using TravelBlogs.Core.Application.Common.Services;
