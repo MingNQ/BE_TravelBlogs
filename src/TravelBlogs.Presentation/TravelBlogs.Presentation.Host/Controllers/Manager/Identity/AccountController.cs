@@ -3,7 +3,7 @@ using TravelBlogs.Core.Application.Dto.Authorization.Accounts;
 using TravelBlogs.Core.Application.Interfaces.Services;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
-namespace TravelBlogs.Presentation.Host.Controllers.Identity;
+namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
 public class AccountController(IUserService userService) : BaseNoAuthController
 {

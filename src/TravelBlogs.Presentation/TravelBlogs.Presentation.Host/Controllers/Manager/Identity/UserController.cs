@@ -7,9 +7,9 @@ using TravelBlogs.Core.Application.Cqrs.Users.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
-namespace TravelBlogs.Presentation.Host.Controllers.Identity;
+namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
-public class UserController(ICurrentUser currentUser) : BaseAuthController
+public class UserController(ICurrentUser currentUser) : BaseAdminAuthController
 {
     [Authorize(Roles = $"{AppConsts.AdminRoleName}")]
     [HttpPost]

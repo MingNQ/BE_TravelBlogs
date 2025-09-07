@@ -2,11 +2,12 @@
 using TravelBlogs.Core.Application.Common.Exceptions;
 using TravelBlogs.Core.Application.Common.Persistences;
 using TravelBlogs.Core.Application.Common.Responses;
+using TravelBlogs.Core.Application.Cqrs.Contacts.Specs;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Contact;
 using TravelBlogs.Core.Domain.Entities.Catalog;
 using TravelBlogs.Core.Shared.Constants;
 
-namespace TravelBlogs.Core.Application.Cqrs.Contacts.Specs;
+namespace TravelBlogs.Core.Application.Cqrs.Contacts.Queries;
 
 public class GetContactByIdQuery:IRequest<ResponseBase<ContactDto>>
 {

@@ -1,13 +1,12 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.Roles.Commands;
 using TravelBlogs.Core.Application.Cqrs.Roles.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
-namespace TravelBlogs.Presentation.Host.Controllers.Identity;
+namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
-public class RoleController : BaseAuthController
+public class RoleController : BaseAdminAuthController
 {
     [HttpPost("search")]
     public async Task<IActionResult> GetAsync()

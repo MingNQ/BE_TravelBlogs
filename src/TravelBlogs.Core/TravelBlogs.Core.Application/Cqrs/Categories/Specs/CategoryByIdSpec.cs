@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ardalis.Specification;
-using TravelBlogs.Core.Domain.Entities;
+﻿using Ardalis.Specification;
+using TravelBlogs.Core.Domain.Entities.Catalog;
+
 namespace TravelBlogs.Core.Application.Cqrs.Categories.Specs;
-public class CategoryByIdSpec : Specification<Category>, ISingleResultSpecification
+
+public class CategoryByIdSpec : Specification<Category>
 {
     public CategoryByIdSpec(long categoryId) => Query.Where(c => c.Id == categoryId);
 }

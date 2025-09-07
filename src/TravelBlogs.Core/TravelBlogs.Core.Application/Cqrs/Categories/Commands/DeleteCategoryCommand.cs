@@ -3,7 +3,7 @@ using TravelBlogs.Core.Application.Common.Exceptions;
 using TravelBlogs.Core.Application.Common.Repositories;
 using TravelBlogs.Core.Application.Common.Responses;
 using TravelBlogs.Core.Application.Common.UnitOfWork;
-using TravelBlogs.Core.Domain.Entities;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 using TravelBlogs.Core.Shared.Constants;
 
 namespace TravelBlogs.Core.Application.Cqrs.Categories.Commands;

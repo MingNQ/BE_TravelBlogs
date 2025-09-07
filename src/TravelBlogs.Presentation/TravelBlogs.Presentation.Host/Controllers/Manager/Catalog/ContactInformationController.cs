@@ -6,11 +6,11 @@ using TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
-namespace TravelBlogs.Presentation.Host.Controllers.Catalog;
+namespace TravelBlogs.Presentation.Host.Controllers.Manager.Catalog;
 
 [ControllerName("contact-information")]
-[Tags("Contact Information")]
-public class ContactInformationController : BaseAuthController
+[Tags("Manager|Contact Information")]
+public class ContactInformationController : BaseAdminAuthController
 {
     [HttpPost("search")]
     public async Task<IActionResult> SearchAsync([FromBody] GetFaqByConditionQuery request)

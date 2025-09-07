@@ -1,21 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TravelBlogs.Core.Domain.Entities;
-using TravelBlogs.Infrastructure.Persistences;
-namespace TravelBlogs.Infrastructure.Persistences.Configuration.Catalog
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TravelBlogs.Core.Domain.Entities.Catalog;
+
+namespace TravelBlogs.Infrastructure.Persistences.Configuration.Catalog;
+
+public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
-    public class CategoryConfiguration : IEntityTypeConfiguration<Category>
+    public void Configure(EntityTypeBuilder<Category> builder)
     {
-        public void Configure(EntityTypeBuilder<Category> builder)
-        {
-            builder.ToTable("Categories", SchemaNames.Catalog);
-            builder.HasKey(c => c.Id);
-            builder.Property(c => c.Name).HasMaxLength(100).IsRequired();
-        }
+        builder.ToTable("Categories", SchemaNames.Catalog);
+        builder.HasKey(c => c.Id);
+        builder.Property(c => c.Name).HasMaxLength(100).IsRequired();
     }
 }

@@ -2,6 +2,4 @@
 
 namespace TravelBlogs.Core.Application.Cqrs.Contacts.Params;
 
-public class SearchContactParam:PaginationFilter
-{
-}
+public class SearchContactParam : PaginationFilter;
