@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Dto\Common\" />
+    <Folder Include="Cqrs\Faqs\Validators\" />
   </ItemGroup>
 
 </Project>

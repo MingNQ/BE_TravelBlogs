@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace TravelBlogs.Infrastructure.Persistences.Configuration;
 
 public static class SchemaNames
@@ -19,4 +21,9 @@ public static class SchemaNames
 
     // Global web configuration: site settings, themes, SEO metadata
     public const string Settings = nameof(Settings);
+
+    internal static void Externals(TableBuilder builder)
+    {
+        throw new NotImplementedException();
+    }
 }

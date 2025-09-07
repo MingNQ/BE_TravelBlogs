@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\TravelBlogs.Core\TravelBlogs.Core.Application\TravelBlogs.Core.Application.csproj" />
     <ProjectReference Include="..\..\TravelBlogs.Core\TravelBlogs.Core.Domain\TravelBlogs.Core.Domain.csproj" />
+    <ProjectReference Include="..\TravelBlogs.Infrastructure.ExternalService\TravelBlogs.Infrastructure.ExternalService.csproj" />
     <ProjectReference Include="..\TravelBlogs.Infrastructure.Persistences\TravelBlogs.Infrastructure.Persistences.csproj" />
   </ItemGroup>
 

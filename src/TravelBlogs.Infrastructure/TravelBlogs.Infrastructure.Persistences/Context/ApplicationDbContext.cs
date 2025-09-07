@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using TravelBlogs.Core.Application.Common.Interfaces;
-using TravelBlogs.Core.Domain.Entities;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 using TravelBlogs.Core.Domain.Entities.Common;
+using TravelBlogs.Core.Domain.Entities.Geo;
 using TravelBlogs.Core.Domain.Entities.Identity;
 
 namespace TravelBlogs.Infrastructure.Persistences.Context;
@@ -31,6 +32,18 @@ public class ApplicationDbContext(
     public DbSet<Role> Roles => Set<Role>();
 
     #endregion Audit
+
+    #region Externals
+    public DbSet<Country> Countries => Set<Country>(); 
+    public DbSet<Destination> Destinations => Set<Destination>();
+    #endregion
+
+    #region Catalog
+    public DbSet<Faq> FAQs => Set<Faq>();
+    public DbSet<ContactInformation> ContactsInformation => Set<ContactInformation>();
+    public DbSet<Contact> Contacts => Set<Contact>();
+
+    #endregion Catalog
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
