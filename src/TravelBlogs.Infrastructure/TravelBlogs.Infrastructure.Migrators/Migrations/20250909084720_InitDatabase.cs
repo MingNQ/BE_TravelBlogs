@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -31,19 +32,39 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 schema: "Auditing",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    TableName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    OldValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NewValues = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AffectedColumns = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrimaryKey = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                    Type = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    TableName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    DateTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    OldValues = table.Column<string>(type: "text", nullable: true),
+                    NewValues = table.Column<string>(type: "text", nullable: true),
+                    AffectedColumns = table.Column<string>(type: "text", nullable: true),
+                    PrimaryKey = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AuditTrails", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                schema: "Catalog",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,15 +73,15 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    IsDefault = table.Column<bool>(type: "bit", maxLength: 11, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    IsDefault = table.Column<bool>(type: "boolean", maxLength: 11, nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -74,15 +95,15 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Iso2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Iso3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Iso2 = table.Column<string>(type: "text", nullable: false),
+                    Iso3 = table.Column<string>(type: "text", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -96,14 +117,14 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Question = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Answer = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Question = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Answer = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -117,21 +138,21 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    FileUniqueName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Size = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Path = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Extension = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Module = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DocumentType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FileName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    FileUniqueName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Size = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
+                    Type = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Path = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Extension = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Module = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    DocumentType = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -145,14 +166,14 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -166,24 +187,24 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Mode = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    TokenExpirationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    VerificationCode = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    CodeExpirationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Link = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    DeletedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Mode = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    TokenExpirationDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    VerificationCode = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    CodeExpirationDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Link = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    DeletedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -197,14 +218,14 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     CountryId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -225,25 +246,25 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    DateOfBirth = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    UserName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    NormalizedUserName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    PasswordHash = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    DateOfBirth = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     AvatarId = table.Column<long>(type: "bigint", nullable: true),
-                    JoinDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    IsVerifiedPhone = table.Column<bool>(type: "bit", nullable: true),
-                    IsVerifiedEmail = table.Column<bool>(type: "bit", nullable: true),
+                    JoinDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsVerifiedPhone = table.Column<bool>(type: "boolean", nullable: true),
+                    IsVerifiedEmail = table.Column<bool>(type: "boolean", nullable: true),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -264,15 +285,15 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Subject = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Content = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -293,15 +314,15 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    ExpiredDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Token = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    ExpiredDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -322,14 +343,14 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
                     CreatedBy = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     LastModifiedBy = table.Column<long>(type: "bigint", nullable: false),
-                    LastModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    DeletedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LastModifiedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     DeletedBy = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -406,6 +427,10 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
             migrationBuilder.DropTable(
                 name: "AuditTrails",
                 schema: "Auditing");
+
+            migrationBuilder.DropTable(
+                name: "Categories",
+                schema: "Catalog");
 
             migrationBuilder.DropTable(
                 name: "Contacts",

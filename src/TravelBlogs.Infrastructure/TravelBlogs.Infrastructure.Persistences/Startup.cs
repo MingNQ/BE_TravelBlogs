@@ -20,8 +20,7 @@ public static class Startup
             .BindConfiguration(nameof(DatabaseSettings))
             .ValidateDataAnnotations()
             .ValidateOnStart();
-       
-        
+
         return services.AddDbContext<ApplicationDbContext>((p, m) =>
             {
                 var databaseSettings = p.GetRequiredService<IOptions<DatabaseSettings>>().Value;
@@ -41,10 +40,12 @@ public static class Startup
         {
             DbProviderKeys.SqlServer => builder.UseSqlServer(connectionString, e =>
                 e.MigrationsAssembly(MigrationsAssembly)),
+            DbProviderKeys.PostgreSql => builder.UseNpgsql(connectionString, e =>
+                e.MigrationsAssembly(MigrationsAssembly)),
             _ => throw new InvalidOperationException($"DB Provider {dbProvider} is not supported.")
         };
     }
-    
+
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped(typeof(IReadRepository<>), typeof(ApplicationDbRepository<>));
