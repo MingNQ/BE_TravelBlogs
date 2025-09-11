@@ -1,4 +1,5 @@
 ﻿using Application.Cqrs.Users.Queries;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Common.Interfaces;
@@ -9,6 +10,8 @@ using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
+[ControllerName("user")]
+[Tags("Identity|User")]
 public class UserController(ICurrentUser currentUser) : BaseAdminAuthController
 {
     [Authorize(Roles = $"{AppConsts.AdminRoleName}")]

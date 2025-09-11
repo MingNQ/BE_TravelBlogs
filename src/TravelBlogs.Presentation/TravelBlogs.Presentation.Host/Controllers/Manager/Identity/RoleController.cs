@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.Roles.Commands;
 using TravelBlogs.Core.Application.Cqrs.Roles.Queries;
@@ -6,6 +7,8 @@ using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
+[ControllerName("role")]
+[Tags("Identity|Role")]
 public class RoleController : BaseAdminAuthController
 {
     [HttpPost("search")]
