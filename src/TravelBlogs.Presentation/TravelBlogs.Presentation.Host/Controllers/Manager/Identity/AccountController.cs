@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Dto.Authorization.Accounts;
 using TravelBlogs.Core.Application.Interfaces.Services;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.Manager.Identity;
 
+[ControllerName("account")]
+[Tags("Identity|Account")]
 public class AccountController(IUserService userService) : BaseNoAuthController
 {
     /// <summary>

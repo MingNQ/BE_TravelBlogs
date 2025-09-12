@@ -22,3 +22,7 @@ public class BaseAuthController : VersionedApiController
 [Authorize(Roles = $"{AppConsts.AdminRoleName}")]
 [Route("api/v{version:apiVersion}/admin/[controller]")]
 public class BaseAdminAuthController : BaseAuthController;
+
+[Authorize(Roles = $"{AppConsts.ManagerRoleName}")]
+[Route("api/v{version:apiVersion}/manager/[controller]")]
+public class BaseManagerAuthController : BaseAuthController;
