@@ -22,6 +22,118 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.Blog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AuthorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<long>("DestinationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LastModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<long?>("ThumbnailId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TimeRead")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("DestinationId");
+
+                    b.HasIndex("ThumbnailId");
+
+                    b.ToTable("Blogs", "Catalog");
+                });
+
+            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.BlogAttachment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("BlogId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("DeletedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("FileStorageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LastModifiedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset?>("LastModifiedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("FileStorageId");
+
+                    b.ToTable("BlogAttachments", "Catalog");
+                });
+
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.Category", b =>
                 {
                     b.Property<long>("Id")
@@ -191,7 +303,6 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.HasIndex("Question");
 
                     b.ToTable("Faqs", "Catalog");
-                });
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Common.FileStorage", b =>
@@ -672,6 +783,59 @@ namespace TravelBlogs.Infrastructure.Migrators.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AuditTrails", "Auditing");
+                });
+
+            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.Blog", b =>
+                {
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Identity.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Catalog.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Geo.Destination", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Common.FileStorage", "Thumbnail")
+                        .WithMany()
+                        .HasForeignKey("ThumbnailId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Destination");
+
+                    b.Navigation("Thumbnail");
+                });
+
+            modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.BlogAttachment", b =>
+                {
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Catalog.Blog", "Blog")
+                        .WithMany("BlogAttachments")
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TravelBlogs.Core.Domain.Entities.Common.FileStorage", "FileStorage")
+                        .WithMany()
+                        .HasForeignKey("FileStorageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("FileStorage");
                 });
 
             modelBuilder.Entity("TravelBlogs.Core.Domain.Entities.Catalog.Contact", b =>
