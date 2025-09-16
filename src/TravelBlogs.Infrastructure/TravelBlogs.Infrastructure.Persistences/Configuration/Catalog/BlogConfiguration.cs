@@ -39,5 +39,11 @@ public class BlogConfiguration : IEntityTypeConfiguration<Blog>
             .WithOne(x => x.Blog)
             .HasForeignKey(x => x.BlogId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .HasMany(x => x.Feedbacks)
+            .WithOne(x => x.Blog)
+            .HasForeignKey(x => x.BlogId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

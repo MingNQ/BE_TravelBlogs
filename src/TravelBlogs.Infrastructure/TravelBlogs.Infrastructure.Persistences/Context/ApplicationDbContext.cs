@@ -44,6 +44,8 @@ public class ApplicationDbContext(
     public DbSet<Contact> Contacts => Set<Contact>();
     public DbSet<Blog> Blogs => Set<Blog>();
     public DbSet<BlogAttachment> BlogAttachments => Set<BlogAttachment>();
+    public DbSet<Feedback> Feedbacks => Set<Feedback>();
+    public DbSet<FeedbackDocument> FeedbackDocuments => Set<FeedbackDocument>();
 
     #endregion Catalog
 
