@@ -24,7 +24,3 @@ public class FeedbackValidatorBase<T> : AbstractValidator<T> where T : FeedbackC
             .WithMessage("User Id must greater than 0");
     }
 }
-
-
-
-

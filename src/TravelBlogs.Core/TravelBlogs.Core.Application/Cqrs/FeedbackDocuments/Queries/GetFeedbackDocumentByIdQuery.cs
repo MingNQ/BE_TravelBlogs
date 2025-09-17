@@ -24,7 +24,3 @@ public class GetFeedbackDocumentByIdQueryHandler(IReadRepository<FeedbackDocumen
         return entity;
     }
 }
-
-
-
-

@@ -26,7 +26,3 @@ public class FeedbackConfiguration : IEntityTypeConfiguration<Feedback>
             .HasIndex(x => new { x.BlogId, x.UserId });
     }
 }
-
-
-
-

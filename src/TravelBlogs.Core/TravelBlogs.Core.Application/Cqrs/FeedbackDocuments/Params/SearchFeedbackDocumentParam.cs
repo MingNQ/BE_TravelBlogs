@@ -7,7 +7,3 @@ public class SearchFeedbackDocumentParam : PaginationFilter
     public long? FeedbackId { get; set; }
     public long? FileStorageId { get; set; }
 }
-
-
-
-

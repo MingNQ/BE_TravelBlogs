@@ -14,7 +14,3 @@ public class UpdateFeedbackCommandValidator : FeedbackValidatorBase<UpdateFeedba
             .WithMessage("Feedback Id must greater than 0");
     }
 }
-
-
-
-

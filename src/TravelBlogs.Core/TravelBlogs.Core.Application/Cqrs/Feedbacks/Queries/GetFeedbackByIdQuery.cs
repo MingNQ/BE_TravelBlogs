@@ -25,4 +25,3 @@ public class GetFeedbackByIdQueryHandler(IReadRepository<Feedback> feedbackRepos
         return feedback;
     }
 }
-

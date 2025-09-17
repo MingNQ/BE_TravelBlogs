@@ -47,4 +47,3 @@ public class UpdateFeedbackCommandHandler(IUnitOfWork unitOfWork)
         return feedback.Adapt<FeedbackDto>();
     }
 }
-

@@ -33,4 +33,3 @@ public class CreateFeedbackCommandHandler(
         return feedback.Adapt<FeedbackDto>();
     }
 }
-

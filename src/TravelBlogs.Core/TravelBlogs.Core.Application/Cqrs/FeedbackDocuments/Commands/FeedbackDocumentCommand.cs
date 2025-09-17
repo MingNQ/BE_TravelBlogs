@@ -5,7 +5,3 @@ public class FeedbackDocumentCommand
     public long FeedbackId { get; set; }
     public long FileStorageId { get; set; }
 }
-
-
-
-

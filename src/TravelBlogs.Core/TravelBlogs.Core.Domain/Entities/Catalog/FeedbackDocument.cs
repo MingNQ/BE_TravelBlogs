@@ -27,5 +27,3 @@ public class FeedbackDocument : AuditableEntity<long>
         FileStorageId = fileStorageId;
     }
 }
-
-

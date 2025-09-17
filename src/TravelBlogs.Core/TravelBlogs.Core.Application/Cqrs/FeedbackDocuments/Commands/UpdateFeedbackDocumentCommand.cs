@@ -44,5 +44,3 @@ public class UpdateFeedbackDocumentCommandHandler(IUnitOfWork unitOfWork)
         return entity.Adapt<FeedbackDocumentDto>();
     }
 }
-
-

@@ -54,5 +54,3 @@ public class FeedbackController : BaseAdminAuthController
         return Ok(result, MessageCommon.DeleteSuccess);
     }
 }
-
-

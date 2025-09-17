@@ -13,7 +13,3 @@ public class FeedbackDocumentByIdSpec : Specification<FeedbackDocument, Feedback
         Query.Include(x => x.FileStorage);
     }
 }
-
-
-
-

@@ -7,9 +7,7 @@ using TravelBlogs.Core.Domain.Entities.Catalog;
 
 namespace TravelBlogs.Core.Application.Cqrs.FeedbackDocuments.Commands;
 
-public class CreateFeedbackDocumentCommand : FeedbackDocumentCommand, IRequest<FeedbackDocumentDto>
-{
-}
+public class CreateFeedbackDocumentCommand : FeedbackDocumentCommand, IRequest<FeedbackDocumentDto>;
 
 public class CreateFeedbackDocumentCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<CreateFeedbackDocumentCommand, FeedbackDocumentDto>
@@ -26,5 +24,3 @@ public class CreateFeedbackDocumentCommandHandler(IUnitOfWork unitOfWork)
         return entity.Adapt<FeedbackDocumentDto>();
     }
 }
-
-

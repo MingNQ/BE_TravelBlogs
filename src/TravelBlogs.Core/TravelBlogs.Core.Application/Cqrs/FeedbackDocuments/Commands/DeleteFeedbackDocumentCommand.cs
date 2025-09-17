@@ -33,7 +33,3 @@ public class DeleteFeedbackDocumentCommandHandler(IUnitOfWork unitOfWork)
         return request.Id;
     }
 }
-
-
-
-

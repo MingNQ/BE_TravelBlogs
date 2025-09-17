@@ -11,4 +11,3 @@ public class FeedbackCommand
     public long BlogId { get; set; }
     public long UserId { get; set; }
 }
-

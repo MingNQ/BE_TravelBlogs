@@ -9,7 +9,3 @@ public class CreateFeedbackCommandValidator : FeedbackValidatorBase<CreateFeedba
     {
     }
 }
-
-
-
-

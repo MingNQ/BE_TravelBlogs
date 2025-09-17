@@ -14,4 +14,3 @@ public class FeedbackByIdSpec : Specification<Feedback, FeedbackDto>
         Query.Include(x => x.User);
     }
 }
-

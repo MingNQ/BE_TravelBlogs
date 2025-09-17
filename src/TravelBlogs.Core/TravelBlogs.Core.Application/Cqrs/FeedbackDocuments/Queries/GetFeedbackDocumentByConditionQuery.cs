@@ -34,7 +34,3 @@ public class GetFeedbackDocumentByConditionQueryHandler(IReadRepository<Feedback
             request.PageSize);
     }
 }
-
-
-
-

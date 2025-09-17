@@ -7,4 +7,3 @@ public class SearchFeedbackParam : PaginationFilter
     public long? BlogId { get; set; }
     public long? UserId { get; set; }
 }
-

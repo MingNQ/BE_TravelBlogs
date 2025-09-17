@@ -23,7 +23,3 @@ public class FeedbackDocumentConfiguration : IEntityTypeConfiguration<FeedbackDo
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
-
-
-
-
