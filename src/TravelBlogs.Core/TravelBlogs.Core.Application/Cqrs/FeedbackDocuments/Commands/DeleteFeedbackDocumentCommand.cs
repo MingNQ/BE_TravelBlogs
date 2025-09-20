@@ -22,8 +22,8 @@ public class DeleteFeedbackDocumentCommandHandler(IUnitOfWork unitOfWork)
     {
         var entity = await _repository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.Id,
-            include: x => x.Include(d => d.FileStorage)
-                           .Include(d => d.Feedback),
+            include: x => x.Include(d => d.FileStorage!)
+                           .Include(d => d.Feedback!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(FeedbackDocument), request.Id));
 

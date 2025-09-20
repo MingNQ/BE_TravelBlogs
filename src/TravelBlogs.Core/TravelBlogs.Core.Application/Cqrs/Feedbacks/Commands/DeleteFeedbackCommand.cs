@@ -22,8 +22,8 @@ public class DeleteFeedbackCommandHandler(IUnitOfWork unitOfWork)
     {
         var feedback = await _feedbackRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == request.Id,
-            include: x => x.Include(f => f.Blog)
-                            .Include(f => f.User),
+            include: x => x.Include(f => f.Blog!)
+                            .Include(f => f.User!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Feedback), request.Id));
 

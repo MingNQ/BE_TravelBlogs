@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using TravelBlogs.Core.Domain.Common.Contracts;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 using TravelBlogs.Core.Domain.Entities.Common;
 
 namespace TravelBlogs.Core.Domain.Entities.Identity;
@@ -21,8 +22,9 @@ public class User : AuditableEntity<long>
     public bool? IsVerifiedEmail { get; private set; }
     public FileStorage? Avatar { get; private set; }
     private readonly List<UserRole> _userRoles = new();
-
     public IReadOnlyCollection<UserRole> UserRoles => _userRoles.AsReadOnly();
+    private readonly List<Comment> _comments = [];
+    public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
 
     public User(string userName, string email, string? firstName, string? lastName)
     {

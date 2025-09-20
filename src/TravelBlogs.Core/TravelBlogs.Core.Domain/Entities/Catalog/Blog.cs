@@ -22,6 +22,8 @@ public class Blog : AuditableEntity<long>
     public IReadOnlyCollection<BlogAttachment> BlogAttachments => _blogAttachments.AsReadOnly();
     private readonly List<Feedback> _feedbacks = [];
     public IReadOnlyCollection<Feedback> Feedbacks => _feedbacks.AsReadOnly();
+    private readonly List<Comment> _comments = [];
+    public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
     public virtual User? Author { get; set; }
     public virtual Category? Category { get; set; }
     public virtual Destination? Destination { get; set; }
