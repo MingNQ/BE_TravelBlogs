@@ -25,7 +25,7 @@ public static class Startup
             .AddAuth(config)
             .AddUnitOfWork<ApplicationDbContext>()
             .AddCustomRepository()
-            //.AddCorsPolicy(config)
+            .AddCorsPolicy(config)
             .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()))
             .AddPersistences()
             .AddRouting(options => options.LowercaseUrls = true)
@@ -66,7 +66,7 @@ public static class Startup
             .UseRequestLocalization()
             .UseStaticFiles()
             .UseRouting()
-            //.UseCorsPolicy()
+            .UseCorsPolicy()
             .UseAuthentication()
             .UseCurrentUser()
             .UseAuthorization();
