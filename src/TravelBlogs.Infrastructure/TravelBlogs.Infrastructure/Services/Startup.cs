@@ -16,6 +16,9 @@ public static class Startup
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ISyncService, SyncService>();
 
+        services.AddTransient<IFilePathService, FilePathService>();
+        services.AddTransient<IFileStorageService, FileStorageService>();
+
         return services;
     }
 }
