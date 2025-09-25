@@ -10,7 +10,7 @@ namespace TravelBlogs.Presentation.Host.Controllers.Common;
 [Tags("Common|Upload File Storage")]
 public class UploadSingleFileStorageController : BaseAuthController
 {
-    [HttpPost]
+    [HttpPost("single")]
     public async Task<IActionResult> UploadSingleFileAsync(UploadSingleFileCommand request)
     {
         var result = await Mediator.Send(request);
@@ -18,7 +18,7 @@ public class UploadSingleFileStorageController : BaseAuthController
         return Ok(result, MessageCommon.UploadSuccess);
     }
 
-    [HttpPost]
+    [HttpPost("multiple")]
     public async Task<IActionResult> UploadMultipleFileAsync(UploadMultipleFileCommand request)
     {
         var result = await Mediator.Send(request);
