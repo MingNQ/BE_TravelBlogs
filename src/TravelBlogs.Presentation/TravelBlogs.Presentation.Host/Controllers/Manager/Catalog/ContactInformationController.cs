@@ -2,7 +2,6 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.ContactsInformation.Commands;
 using TravelBlogs.Core.Application.Cqrs.ContactsInformation.Queries;
-using TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
@@ -13,7 +12,7 @@ namespace TravelBlogs.Presentation.Host.Controllers.Manager.Catalog;
 public class ContactInformationController : BaseAdminAuthController
 {
     [HttpPost("search")]
-    public async Task<IActionResult> SearchAsync([FromBody] GetFaqByConditionQuery request)
+    public async Task<IActionResult> SearchAsync([FromBody] GetContactInformationByConditionQuery request)
     {
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.GetDataSuccess);
