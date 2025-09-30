@@ -9,6 +9,8 @@ public class UploadSingleFileCommand : IRequest<FileStorageDto>
 {
     public IFormFile FileData { get; set; } = default!;
 
+    public UploadSingleFileCommand() { }
+
     public UploadSingleFileCommand(IFormFile fileData)
     {
         FileData = fileData;

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TravelBlogs.Core.Application.Common.Interfaces;
+using TravelBlogs.Core.Application.Configurations;
 using TravelBlogs.Infrastructure.Auth.Jwt;
 
 namespace TravelBlogs.Infrastructure.Auth;
@@ -12,6 +13,7 @@ public static class Startup
     {
         services.AddCurrentUser();
         services.Configure<SecuritySettings>(config.GetSection(nameof(SecuritySettings)));
+        services.Configure<FileStorageSettings>(config.GetSection(nameof(FileStorageSettings)));
         return services.AddJwtAuth();
     }
 

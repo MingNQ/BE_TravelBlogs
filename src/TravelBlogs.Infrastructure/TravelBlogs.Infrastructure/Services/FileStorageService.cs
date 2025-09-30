@@ -35,7 +35,7 @@ public class FileStorageService(
         string uploadFolder = _fileStorageSettings.FullPath;
         string basePath = _fileStorageSettings.Path;
 
-        string contentRoot = environment.ContentRootPath;
+        string contentRoot = environment.WebRootPath ?? environment.ContentRootPath;
         uploadFolder = Path.Combine(contentRoot, basePath.TrimStart('/'));
 
         if (!Directory.Exists(uploadFolder))

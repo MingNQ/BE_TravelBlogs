@@ -13,7 +13,8 @@ public class UploadSingleFileStorageController : BaseAuthController
     [HttpPost("single")]
     public async Task<IActionResult> UploadSingleFileAsync(UploadSingleFileCommand request)
     {
-        var result = await Mediator.Send(request);
+        var file = new UploadSingleFileCommand(request.FileData);
+        var result = await Mediator.Send(file);
 
         return Ok(result, MessageCommon.UploadSuccess);
     }
