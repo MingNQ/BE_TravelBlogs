@@ -8,13 +8,13 @@ namespace TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
 
 public class GetFaqForExternalQuery : IRequest<List<FaqExternalDto>>;
 
-public class GetFaqForExternalQueryHandler(IReadRepository<Faq> repo)
+public class GetFaqForExternalQueryHandler(IReadRepository<Faq> faqRepository)
 	: IRequestHandler<GetFaqForExternalQuery, List<FaqExternalDto>>
 {
-	public async Task<List<FaqExternalDto>> Handle(GetFaqForExternalQuery request, CancellationToken ct)
+	public async Task<List<FaqExternalDto>> Handle(GetFaqForExternalQuery request, CancellationToken cancellationToken)
 	{
 		var spec = new FaqForExternalSpec();
-		var list = await repo.ListAsync(spec, ct);
+		var list = await faqRepository.ListAsync(spec, cancellationToken);
 		return list;
 	}
 }

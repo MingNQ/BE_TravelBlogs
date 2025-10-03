@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.Comments.Commands;
+using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.External;
@@ -13,7 +14,7 @@ public class CommentController : BaseAuthController
     public async Task<IActionResult> CreateAsync(CreateCommentCommand request)
     {
         var result = await Mediator.Send(request);
-        return Ok(result);
+        return Ok(result, MessageCommon.GetDataSuccess);
     }
 
     [HttpPut("{id:long}")]
@@ -21,7 +22,7 @@ public class CommentController : BaseAuthController
     {
         request.SetId(id);
         var result = Mediator.Send(request);
-        return Ok(result);
+        return Ok(result, MessageCommon.GetDataSuccess);
     }
 
     [HttpDelete("{id:long}")]
@@ -31,6 +32,6 @@ public class CommentController : BaseAuthController
         {
             Id = id
         });
-        return Ok(result);
+        return Ok(result, MessageCommon.GetDataSuccess);
     }
 }

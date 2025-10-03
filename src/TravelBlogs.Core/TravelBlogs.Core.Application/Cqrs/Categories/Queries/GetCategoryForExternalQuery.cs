@@ -8,13 +8,13 @@ namespace TravelBlogs.Core.Application.Cqrs.Categories.Queries;
 
 public class GetCategoryForExternalQuery : IRequest<List<CategoryExternalDto>>;
 
-public class GetCategoryForExternalQueryHandler(IReadRepository<Category> repo)
+public class GetCategoryForExternalQueryHandler(IReadRepository<Category> categoryRepository)
 	: IRequestHandler<GetCategoryForExternalQuery, List<CategoryExternalDto>>
 {
-	public async Task<List<CategoryExternalDto>> Handle(GetCategoryForExternalQuery request, CancellationToken ct)
+	public async Task<List<CategoryExternalDto>> Handle(GetCategoryForExternalQuery request, CancellationToken cancellationToken)
 	{
 		var spec = new CategoryForExternalSpec();
-		var list = await repo.ListAsync(spec, ct);
+		var list = await categoryRepository.ListAsync(spec, cancellationToken);
 		return list;
 	}
 }

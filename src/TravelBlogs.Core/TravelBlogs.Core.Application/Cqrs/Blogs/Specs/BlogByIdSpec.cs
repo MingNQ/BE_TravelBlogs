@@ -9,7 +9,5 @@ public class BlogByIdSpec : Specification<Blog, BlogDto>
     public BlogByIdSpec(long id)
     {
         Query.Where(x => x.Id == id);
-
-        Query.Include(x => x.BlogAttachments);
     }
 }

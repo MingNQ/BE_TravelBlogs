@@ -8,13 +8,13 @@ namespace TravelBlogs.Core.Application.Cqrs.ContactsInformation.Queries;
 
 public class GetContactInformationForExternalQuery : IRequest<List<ContactInformationExternalDto>>;
 
-public class GetContactInformationForExternalQueryHandler(IReadRepository<ContactInformation> repo)
+public class GetContactInformationForExternalQueryHandler(IReadRepository<ContactInformation> contactInformationRepository)
 	: IRequestHandler<GetContactInformationForExternalQuery, List<ContactInformationExternalDto>>
 {
-	public async Task<List<ContactInformationExternalDto>> Handle(GetContactInformationForExternalQuery request, CancellationToken ct)
+	public async Task<List<ContactInformationExternalDto>> Handle(GetContactInformationForExternalQuery request, CancellationToken cancellationToken)
 	{
 		var spec = new ContactInformationForExternalSpec();
-		var list = await repo.ListAsync(spec, ct);
+		var list = await contactInformationRepository.ListAsync(spec, cancellationToken);
 		return list;
 	}
 }

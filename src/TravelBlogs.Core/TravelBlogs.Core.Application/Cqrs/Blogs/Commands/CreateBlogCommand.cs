@@ -10,8 +10,6 @@ namespace TravelBlogs.Core.Application.Cqrs.Blogs.Commands;
 public class CreateBlogCommand : BlogCommand, IRequest<BlogDto>
 {
     public long AuthorId { get; set; }
-    public float Rating { get; set; }
-    public List<BlogAttachmentCommand> BlogAttachments { get; set; } = [];
 }
 
 public class CreateBlogCommandHandler(
@@ -26,14 +24,12 @@ public class CreateBlogCommandHandler(
             request.Title,
             request.Description,
             request.Content,
-            request.Rating,
             request.TimeRead,
             request.Status,
             request.AuthorId,
             request.CategoryId,
             request.DestinationId,
             request.ThumbnailId);
-        blog.AddAttachments(request.BlogAttachments.Select(x => BlogAttachment.Create(blog.Id, x.FileStorageId)).ToList());
 
         await _blogRepository.InsertAsync(blog, cancellationToken);
         await unitOfWork.SaveChangesAsync();

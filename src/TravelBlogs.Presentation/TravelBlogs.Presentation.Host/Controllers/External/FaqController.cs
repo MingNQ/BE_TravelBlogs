@@ -1,6 +1,7 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.Faqs.Queries;
+using TravelBlogs.Core.Shared.Constants;
 using TravelBlogs.Presentation.Host.Controllers.Base;
 
 namespace TravelBlogs.Presentation.Host.Controllers.External;
@@ -13,6 +14,6 @@ public class FaqController : BaseNoAuthController
 	public async Task<IActionResult> GetAsync()
 	{
 		var result = await Mediator.Send(new GetFaqForExternalQuery());
-		return Ok(result);
+		return Ok(result, MessageCommon.GetDataSuccess);
 	}
 }

@@ -19,7 +19,6 @@ public class UpdateBlogCommand : BlogCommand, IRequest<BlogDto>
     {
         Id = id;
     }
-    public List<BlogAttachmentCommand> BlogAttachments { get; set; } = [];
 }
 
 public class UpdateBlogCommandHandler(IUnitOfWork unitOfWork)
@@ -34,8 +33,7 @@ public class UpdateBlogCommandHandler(IUnitOfWork unitOfWork)
             include: x => x.Include(b => b.Author)
                             .Include(b => b.Category)
                             .Include(b => b.Destination)
-                            .Include(b => b.Thumbnail)
-                            .Include(b => b.BlogAttachments),
+                            .Include(b => b.Thumbnail!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Blog), request.Id));
 
@@ -48,7 +46,6 @@ public class UpdateBlogCommandHandler(IUnitOfWork unitOfWork)
             request.CategoryId,
             request.DestinationId,
             request.ThumbnailId);
-        blog.UpdateBlogAttachments(request.BlogAttachments.Select(x => BlogAttachment.Create(blog.Id, x.FileStorageId)).ToList());
 
         _blogRepository.Update(blog);
         await unitOfWork.SaveChangesAsync();

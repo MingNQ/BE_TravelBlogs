@@ -11,15 +11,13 @@ public class Blog : AuditableEntity<long>
     public string Title { get; private set; } = string.Empty;
     public string? Description { get; private set; } = string.Empty;
     public string Content { get; private set; } = string.Empty;
-    public float Rating { get; private set; }
-    public int TimeRead { get; private set; }
+    public float? Rating { get; private set; }
+    public int? TimeRead { get; private set; }
     public BlogStatusEnum Status { get; private set; }
     public long AuthorId { get; private set; }
     public long CategoryId { get; private set; }
     public long DestinationId { get; private set; }
     public long? ThumbnailId { get; private set; }
-    private readonly List<BlogAttachment> _blogAttachments = [];
-    public IReadOnlyCollection<BlogAttachment> BlogAttachments => _blogAttachments.AsReadOnly();
     private readonly List<Feedback> _feedbacks = [];
     public IReadOnlyCollection<Feedback> Feedbacks => _feedbacks.AsReadOnly();
     private readonly List<Comment> _comments = [];
@@ -33,8 +31,7 @@ public class Blog : AuditableEntity<long>
         string title,
         string? description,
         string content,
-        float rating,
-        int timeRead,
+        int? timeRead,
         BlogStatusEnum status,
         long authorId,
         long categoryId,
@@ -46,7 +43,6 @@ public class Blog : AuditableEntity<long>
             Title = title,
             Description = description,
             Content = content,
-            Rating = rating,
             TimeRead = timeRead,
             Status = status,
             AuthorId = authorId,
@@ -60,7 +56,7 @@ public class Blog : AuditableEntity<long>
         string title,
         string? description,
         string content,
-        int timeRead,
+        int? timeRead,
         BlogStatusEnum status,
         long categoryId,
         long destinationId,
@@ -84,15 +80,5 @@ public class Blog : AuditableEntity<long>
     public void UpdateRating(float rating)
     {
         Rating = rating;
-    }
-
-    public void AddAttachments(List<BlogAttachment> blogAttachments)
-    {
-        _blogAttachments.AddRange(blogAttachments);
-    }
-
-    public void UpdateBlogAttachments(List<BlogAttachment> blogAttachments)
-    {
-        throw new NotImplementedException();
     }
 }

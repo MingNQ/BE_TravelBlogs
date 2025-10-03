@@ -25,8 +25,7 @@ public class DeleteBlogCommandHandler(IUnitOfWork unitOfWork)
             include: x => x.Include(b => b.Author)
                             .Include(b => b.Category)
                             .Include(b => b.Destination)
-                            .Include(b => b.Thumbnail)
-                            .Include(b => b.BlogAttachments),
+                            .Include(b => b.Thumbnail!),
             disableTracking: false)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Blog), request.Id));
 
