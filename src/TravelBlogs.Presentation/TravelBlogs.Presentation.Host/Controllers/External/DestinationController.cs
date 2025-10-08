@@ -9,7 +9,7 @@ namespace TravelBlogs.Presentation.Host.Controllers.External;
 [Tags("External|Geography")]
 public class DestinationController : BaseNoAuthController
 {
-	[HttpGet("by-country/{countryId:long}")]
+	[HttpGet("{countryId:long}")]
 	public async Task<IActionResult> GetByCountryAsync(long countryId)
 	{
 		var result = await Mediator.Send(new GetDestinationsByCountryQuery(countryId));
