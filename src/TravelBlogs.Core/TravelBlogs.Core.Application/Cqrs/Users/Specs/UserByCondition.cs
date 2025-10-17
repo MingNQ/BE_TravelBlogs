@@ -16,7 +16,7 @@ public sealed class UserByConditionSpec : BaseSpec<User, UserDto>
 
 public sealed class UserByIdSpec : Specification<User, UserDto>
 {
-    public UserByIdSpec(int id)
+    public UserByIdSpec(long id)
     {
         Query.Where(x => x.Id == id);
 

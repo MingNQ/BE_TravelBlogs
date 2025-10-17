@@ -11,7 +11,7 @@ namespace Application.Cqrs.Users.Queries;
 
 public class GetUserByIdQuery : IRequest<ResponseBase<UserDto>>
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
 }
 
 public class GetUserByIdQueryHandler(

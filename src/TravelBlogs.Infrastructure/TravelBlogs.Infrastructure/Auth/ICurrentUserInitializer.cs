@@ -6,6 +6,6 @@ public interface ICurrentUserInitializer
 {
     void SetCurrentUser(ClaimsPrincipal user);
 
-    void SetCurrentUserId(int userId);
+    void SetCurrentUserId(long userId);
 
 }
