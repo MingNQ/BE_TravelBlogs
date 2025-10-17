@@ -31,7 +31,7 @@ public interface IUserService
     /// <summary>
     /// Gets user by ID with roles and avatar
     /// </summary>
-    Task<UserDto> GetUserByIdAsync(int userId);
+    Task<UserDto> GetUserByIdAsync(long userId);
 
     /// <summary>
     /// Registers a new user account

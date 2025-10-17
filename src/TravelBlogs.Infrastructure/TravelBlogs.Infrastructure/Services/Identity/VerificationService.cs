@@ -1,0 +1,99 @@
+using TravelBlogs.Core.Application.Common.Repositories;
+using TravelBlogs.Core.Application.Common.UnitOfWork;
+using TravelBlogs.Core.Application.Interfaces.Services;
+using TravelBlogs.Core.Domain.Entities.Identity;
+using TravelBlogs.Core.Domain.Events.Verification;
+using TravelBlogs.Core.Domain.ValueObjects.Verification;
+using TravelBlogs.Core.Shared.Constants;
+
+namespace TravelBlogs.Infrastructure.Services.Identity;
+
+public class VerificationService(IUnitOfWork unitOfWork)
+    : IVerificationService
+{
+    private readonly IWriteRepository<UserVerification> _verificationRepository = unitOfWork.GetRepository<UserVerification>();
+
+    public async Task<UserVerification?> FindActiveVerification(ContactInfo contactInfo, VerificationMode mode, long? userId = null)
+    {
+        string modeString = mode.ToString();
+
+        if (contactInfo.IsEmail)
+        {
+            return await _verificationRepository.GetFirstOrDefaultAsync(
+                predicate: x => x.Email == contactInfo.Value
+                              && x.Mode == modeString
+                              && x.Status == UserVerificationStatus.Active
+                              && x.CodeExpirationDate.HasValue && x.CodeExpirationDate > DateTime.UtcNow
+                              && (userId == null || x.UserId == userId),
+                disableTracking: false);
+        }
+
+        return await _verificationRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Phone == contactInfo.Value
+                          && x.Mode == modeString
+                          && x.Status == UserVerificationStatus.Active
+                          && x.CodeExpirationDate.HasValue && x.CodeExpirationDate > DateTime.UtcNow
+                          && (userId == null || x.UserId == userId),
+            disableTracking: false);
+    }
+
+    public async Task<UserVerification?> FindActiveVerificationById(ContactInfo contactInfo, long verificationId)
+    {
+        if (contactInfo.IsEmail)
+        {
+            return await _verificationRepository.GetFirstOrDefaultAsync(
+                predicate: x => x.Id == verificationId
+                              && x.Email == contactInfo.Value
+                              && x.Status == UserVerificationStatus.Active
+                              && x.CodeExpirationDate.HasValue && x.CodeExpirationDate > DateTime.UtcNow,
+                disableTracking: false);
+        }
+
+        return await _verificationRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == verificationId
+                          && x.Phone == contactInfo.Value
+                          && x.Status == UserVerificationStatus.Active
+                          && x.CodeExpirationDate.HasValue && x.CodeExpirationDate > DateTime.UtcNow,
+            disableTracking: false);
+    }
+
+    public async Task<UserVerification?> FindVerificationById(ContactInfo contactInfo, long verificationId)
+    {
+        if (contactInfo.IsEmail)
+        {
+            return await _verificationRepository.GetFirstOrDefaultAsync(
+                predicate: x => x.Id == verificationId
+                              && x.Email == contactInfo.Value,
+                disableTracking: false);
+        }
+
+        return await _verificationRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == verificationId
+                          && x.Phone == contactInfo.Value,
+            disableTracking: false);
+    }
+
+    public async Task InsertVerificationAsync(UserVerification verification, CancellationToken cancellation)
+    {
+        await _verificationRepository.InsertAsync(verification, cancellation);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task UpdateVerificationAsync(UserVerification verification)
+    {
+        _verificationRepository.Update(verification);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task DeleteVerificationAsync(long verificationId)
+    {
+        var verification = await _verificationRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == verificationId);
+        
+        if (verification != null)
+        {
+            _verificationRepository.Delete(verification);
+            await unitOfWork.SaveChangesAsync();
+        }
+    }
+}

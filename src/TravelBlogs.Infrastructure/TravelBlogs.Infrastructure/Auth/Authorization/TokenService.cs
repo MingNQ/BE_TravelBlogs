@@ -60,8 +60,7 @@ public class TokenService : ITokenService
 
     public async Task<TokenResponse> GetTokenAsync(TokenRequest request, string ipAddress, CancellationToken cancellationToken)
     {
-        //var userLogin = await _userService.GetLoginResultAsync(request.Email, request.Password);
-        var user = await _userRepository.GetFirstOrDefaultAsync(
+        var user = await _userRepository.GetFirstOrDefaultAsync(                                                                                                                                                                                                                                                                                                                        
             predicate: x => x.Email == request.Email && request.Password == AppConsts.AdminPassword,
             include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role)!,
             disableTracking: true)
@@ -69,7 +68,19 @@ public class TokenService : ITokenService
 
         var userLogin = user.Adapt<UserDto>();
 
-        return await GenerateTokensAndUpdateUser(userLogin, ipAddress);
+        return await GenerateTokensAndUpdateUser(userLogin, false, ipAddress);
+    }
+
+    public async Task<TokenResponse> GetTokenAsync(long userId, bool rememberme, string ipAddress, CancellationToken cancellationToken)
+    {
+        var user = await _userService.GetUserByIdAsync(userId);
+
+        if (user is null)
+        {
+            throw new UnauthorizedException("User not found");
+        }
+
+        return await GenerateTokensAndUpdateUser(user, rememberme, ipAddress);
     }
 
     public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenRequest request, string ipAddress)
@@ -102,17 +113,26 @@ public class TokenService : ITokenService
             throw new UnauthorizedException("User not found");
         }
 
-        return await GenerateTokensAndUpdateUser(user, ipAddress);
+        string? rememberMeInToken = userPrincipal.FindFirstValue(SystemClaims.RememberMe);
+        
+        bool.TryParse(rememberMeInToken, out bool rememberMe);
+
+        return await GenerateTokensAndUpdateUser(user, rememberMe, ipAddress);
     }
 
-    private async Task<TokenResponse> GenerateTokensAndUpdateUser(UserDto user, string ipAddress)
+    private async Task<TokenResponse> GenerateTokensAndUpdateUser(UserDto user, bool rememberMe, string ipAddress)
     {
         // Generate JWT Token
-        string token = GenerateJwt(user, ipAddress);
+        string token = GenerateJwt(user, rememberMe, ipAddress);
 
         // Generate refresh token with improved security
         string refreshToken = GenerateRefreshToken();
         var refreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtOptions.RefreshTokenExpirationInDays);
+
+        if (rememberMe)
+        {
+            refreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtOptions.RememberRefreshTokenExpirationInDays);
+        }
 
         // Add or update refresh token in database
         await UpdateRefreshToken(user.Id, refreshToken, refreshTokenExpiryTime);
@@ -120,7 +140,7 @@ public class TokenService : ITokenService
         return new TokenResponse(token, refreshToken, refreshTokenExpiryTime);
     }
 
-    private string GenerateJwt(UserDto user, string ipAddress)
+    private string GenerateJwt(UserDto user, bool rememberMe, string ipAddress)
     {
         var claims = new List<Claim>
         {
@@ -131,10 +151,15 @@ public class TokenService : ITokenService
             new(ClaimTypes.Surname, user.LastName),
             new(SystemClaims.IpAddress, ipAddress),
             new(SystemClaims.Avatar, user.Avatar?.Path ?? string.Empty),
+            new(SystemClaims.UserId, user.Id.ToString()),
+            new(SystemClaims.RememberMe, rememberMe.ToString()),
             new(ClaimTypes.MobilePhone, user.PhoneNumber)
         };
 
         claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role!.Name)));
+
+        var tokenExpire = rememberMe ? DateTime.UtcNow.AddMinutes(_jwtOptions.RememberTokenExpirationInMinutes) 
+            : DateTime.UtcNow.AddMinutes(_jwtOptions.TokenExpirationInMinutes);
 
         var token = new JwtSecurityToken(
             issuer: JwtAuthConsts.Issuer,

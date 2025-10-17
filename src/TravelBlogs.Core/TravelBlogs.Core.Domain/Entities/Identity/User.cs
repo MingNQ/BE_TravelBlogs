@@ -35,6 +35,11 @@ public class User : AuditableEntity<long>
         JoinDate = DateTimeOffset.UtcNow;
     }
 
+    public static User Create(string userName, string email, string? firstName = null, string? lastName = null)
+    {
+        return new User(userName, email, firstName, lastName);
+    }
+
     public void SetEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
@@ -200,5 +205,10 @@ public class User : AuditableEntity<long>
     {
         FirstName = firstName ?? string.Empty;
         LastName = lastName ?? string.Empty;
+    }
+
+    public bool IsVerified()
+    {
+        return IsVerifiedEmail == true && IsVerifiedPhone == true;
     }
 }

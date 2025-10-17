@@ -1,0 +1,22 @@
+namespace TravelBlogs.Core.Shared.Constants;
+
+public static class UserVerificationMode
+{
+    public const string VerificationForSignUp = "VERIFICATION_SIGNUP";
+    public const string VerificationForSignin = "VERIFICATION_SIGNIN";
+    public const string VerificationThisEmail = "VERIFICATION_THIS_EMAIL";
+    public const string ForgotPassword = "FORGOT_PASSWORD";
+    public const string VerifyCurrentUserEmail = "VERIFY_CURRENT_USER_EMAIL";
+    public const string VerifyCurrentUserEmailByLinkOnly = "VERIFY_CURRENT_USER_EMAIL_BY_LINK_ONLY";
+    public const string UserInvitation = "USER_INVITATION";
+
+    public const string PhoneVerificationForSignUp = "PHONE_VERIFICATION_SIGNUP";
+    public const string PhoneVerificationForSignin = "PHONE_VERIFICATION_SIGNIN";
+    public const string VerifyCurrentUserPhone = "VERIFY_CURRENT_USER_PHONE";
+}
+
+public static class UserVerificationStatus
+{
+    public const int Active = 1;
+    public const int Inactive = 0;
+}
