@@ -43,7 +43,7 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public Task<UserDto> GetUserByIdAsync(int userId)
+    public Task<UserDto> GetUserByIdAsync(long userId)
     {
         throw new NotImplementedException();
     }

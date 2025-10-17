@@ -15,6 +15,7 @@ public static class Startup
         services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ISyncService, SyncService>();
+        services.AddTransient<IVerificationService, VerificationService>();
 
         services.AddTransient<IFilePathService, FilePathService>();
         services.AddTransient<IFileStorageService, FileStorageService>();
