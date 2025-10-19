@@ -1,90 +1,553 @@
-using TravelBlogs.Core.Application.Common.Repositories;
+﻿using TravelBlogs.Core.Application.Common.Repositories;
 using TravelBlogs.Core.Application.Common.UnitOfWork;
 using TravelBlogs.Core.Application.Cqrs.Users.Commands;
 using TravelBlogs.Core.Application.Dto.Authorization.Accounts;
 using TravelBlogs.Core.Application.Dto.Authorization.Verification;
+using TravelBlogs.Core.Application.Dto.Authorization.Role;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.User;
+using TravelBlogs.Core.Application.Dto.Persistence.Catalog.FileStorages;
 using TravelBlogs.Core.Application.Interfaces.Services;
+using TravelBlogs.Core.Application.Utility;
 using TravelBlogs.Core.Domain.Entities.Identity;
+using TravelBlogs.Core.Domain.ValueObjects.Verification;
+using TravelBlogs.Core.Domain.Events.Verification;
+using TravelBlogs.Core.Shared.Constants;
+using Microsoft.EntityFrameworkCore;
+using TravelBlogs.Core.Domain.Common.Enums;
 
 namespace TravelBlogs.Infrastructure.Services.Identity;
 
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    // private readonly IFilePathService _filePathService;
-    // private readonly IVerificationService _verificationService;
-    // private readonly IEmailService _emailService;
+    private readonly IVerificationService _verificationService;
     private readonly IWriteRepository<User> _userRepository;
     private readonly IWriteRepository<Role> _roleRepository;
 
-    public Task<bool> ChangePassword(UpdatePasswordCommand request)
+    public UserService(IUnitOfWork unitOfWork, IVerificationService verificationService)
     {
-        throw new NotImplementedException();
+        _unitOfWork = unitOfWork;
+        _verificationService = verificationService;
+        _userRepository = unitOfWork.GetRepository<User>();
+        _roleRepository = unitOfWork.GetRepository<Role>();
     }
 
-    public Task ChangePasswordAsync(int userId, string password)
+    public async Task<bool> ChangePassword(UpdatePasswordCommand request)
     {
-        throw new NotImplementedException();
+        if (request == null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.CurrentPassword) || 
+            string.IsNullOrWhiteSpace(request.NewPassword) || 
+            string.IsNullOrWhiteSpace(request.ConfirmNewPassword))
+        {
+            throw new ArgumentException("All password fields are required");
+        }
+
+        if (request.NewPassword != request.ConfirmNewPassword)
+        {
+            throw new ArgumentException("New password and confirmation password do not match");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == request.UserId,
+            disableTracking: false);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var currentPasswordHash = Utils.ComputeHash(request.CurrentPassword);
+        if (user.PasswordHash != currentPasswordHash)
+        {
+            throw new UnauthorizedAccessException("Current password is incorrect");
+        }
+
+        var newPasswordHash = Utils.ComputeHash(request.NewPassword);
+        user.SetPassword(newPasswordHash);
+
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync();
+
+        return true;
     }
 
-    public Task<CheckingItemExistModel> CheckEmailExisted(string email)
+    public async Task ChangePasswordAsync(int userId, string password)
     {
-        throw new NotImplementedException();
+        if (userId <= 0)
+        {
+            throw new ArgumentException("Invalid user ID");
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentException("Password is required");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == userId,
+            disableTracking: false);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var passwordHash = Utils.ComputeHash(password);
+        user.SetPassword(passwordHash);
+
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    public Task<SendVerificationEmailOutputModel> ForgotPassword(SendPasswordResetCodeInput input)
+    public async Task<CheckingItemExistModel> CheckEmailExisted(string email)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return new CheckingItemExistModel(string.Empty);
+        }
+
+        var normalizedEmail = Utils.NormalizeEmail(email);
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == normalizedEmail,
+            disableTracking: true);
+
+        if (user == null)
+        {
+            return new CheckingItemExistModel(email);
+        }
+
+        return new CheckingItemExistModel(
+            existed: true,
+            activated: user.IsVerifiedEmail ?? false,
+            value: email)
+        {
+            HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
+        };
     }
 
-    public Task<UserDto> GetLoginResultAsync(string username, string password)
+    public async Task<SendVerificationEmailOutputModel> ForgotPassword(SendPasswordResetCodeInput input)
     {
-        throw new NotImplementedException();
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        if (string.IsNullOrWhiteSpace(input.EmailAddress))
+        {
+            throw new ArgumentException("Email address is required");
+        }
+
+        var normalizedEmail = Utils.NormalizeEmail(input.EmailAddress);
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == normalizedEmail,
+            disableTracking: true);
+
+        if (user == null)
+        {
+            return new SendVerificationEmailOutputModel
+            {
+                Email = input.EmailAddress,
+                Sent = false,
+                Message = "User not found with this email address"
+            };
+        }
+
+        var contactInfo = ContactInfo.CreateEmail(input.EmailAddress);
+        
+        // Check if there's already an active verification
+        var existingVerification = await _verificationService.FindActiveVerification(
+            contactInfo, VerificationMode.ForgotPassword, user.Id);
+
+        if (existingVerification != null)
+        {
+            return new SendVerificationEmailOutputModel
+            {
+                Email = input.EmailAddress,
+                UserId = (int)user.Id,
+                Code = existingVerification.VerificationCode,
+                Sent = true,
+                Message = $"Password reset code already sent to {contactInfo.ValueMask()}"
+            };
+        }
+
+        // Create new verification for password reset
+        var verification = UserVerification.CreateForForgotPassword(contactInfo, user.Id);
+        await _verificationService.InsertVerificationAsync(verification, CancellationToken.None);
+
+        return new SendVerificationEmailOutputModel
+        {
+            Email = input.EmailAddress,
+            UserId = (int)user.Id,
+            Code = verification.VerificationCode,
+            Sent = true,
+            Message = $"Password reset code sent to {contactInfo.ValueMask()}"
+        };
     }
 
-    public Task<UserDto> GetUserByIdAsync(long userId)
+    public async Task<UserDto> GetLoginResultAsync(string username, string password)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            throw new ArgumentException("Username and password are required");
+        }
+
+        var normalizedUsername = Utils.NormalizeUserName(username);
+        var passwordHash = Utils.ComputeHash(password);
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedUserName == normalizedUsername || x.NormalizedEmail == normalizedUsername,
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            disableTracking: false);
+
+        if (user == null || user.PasswordHash != passwordHash)
+        {
+            throw new UnauthorizedAccessException("Invalid username or password");
+        }
+
+        return MapToUserDto(user);
     }
 
-    public Task<UserDto> GetUserDetailById(long userId)
+    public async Task<UserDto> GetUserByIdAsync(long userId)
     {
-        throw new NotImplementedException();
+        if (userId <= 0)
+        {
+            throw new ArgumentException("Invalid user ID");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == userId,
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            disableTracking: true);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        return MapToUserDto(user);
     }
 
-    public Task<UserDto> GetUserEmailExisted(string email)
+    public async Task<UserDto> GetUserDetailById(long userId)
     {
-        throw new NotImplementedException();
+        if (userId <= 0)
+        {
+            throw new ArgumentException("Invalid user ID");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == userId,
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            disableTracking: true);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        return MapToUserDto(user);
     }
 
-    public Task<UserDto> Register(RegisterAccountInput input)
+    public async Task<UserDto> GetUserEmailExisted(string email)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email is required");
+        }
+
+        var normalizedEmail = Utils.NormalizeEmail(email);
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == normalizedEmail,
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            disableTracking: true);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        return MapToUserDto(user);
     }
 
-    public Task ResendVerificationEmail(int userId)
+    public async Task<UserDto> Register(RegisterAccountInput input)
     {
-        throw new NotImplementedException();
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        if (string.IsNullOrWhiteSpace(input.Username) || 
+            string.IsNullOrWhiteSpace(input.Email) || 
+            string.IsNullOrWhiteSpace(input.Password))
+        {
+            throw new ArgumentException("Username, email, and password are required");
+        }
+
+        var normalizedUsername = Utils.NormalizeUserName(input.Username);
+        var normalizedEmail = Utils.NormalizeEmail(input.Email);
+
+        // Check if username or email already exists
+        var existingUser = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedUserName == normalizedUsername || x.NormalizedEmail == normalizedEmail,
+            disableTracking: true);
+
+        if (existingUser != null)
+        {
+            throw new ArgumentException("Username or email already exists");
+        }
+
+        // Create new user
+        var user = User.Create(input.Username, input.Email, input.FirstName, input.LastName);
+        var passwordHash = Utils.ComputeHash(input.Password);
+        user.SetPassword(passwordHash);
+
+        // Assign default user role
+        var defaultRole = await _roleRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedName == AppConsts.UserNormalRoleName.ToUpperInvariant(),
+            disableTracking: true);
+
+        if (defaultRole != null)
+        {
+            user.AddRole(defaultRole.Id);
+        }
+
+        await _userRepository.InsertAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+
+        // Get the created user with roles and avatar
+        var createdUser = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == user.Id,
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            disableTracking: true);
+
+        return MapToUserDto(createdUser!);
     }
 
-    public Task<string> ResetPassword(ResetPasswordInput input)
+    public async Task ResendVerificationEmail(int userId)
     {
-        throw new NotImplementedException();
+        if (userId <= 0)
+        {
+            throw new ArgumentException("Invalid user ID");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.Id == userId,
+            disableTracking: true);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        if (string.IsNullOrWhiteSpace(user.Email))
+        {
+            throw new ArgumentException("User email is not set");
+        }
+
+        var contactInfo = ContactInfo.CreateEmail(user.Email);
+        
+        // Check if there's already an active verification
+        var existingVerification = await _verificationService.FindActiveVerification(
+            contactInfo, VerificationMode.EmailVerification, user.Id);
+
+        if (existingVerification != null)
+        {
+            // Resend existing verification
+            existingVerification.Resend();
+            await _verificationService.UpdateVerificationAsync(existingVerification);
+        }
+        else
+        {
+            // Create new verification for email verification using the basic Create method
+            var code = TravelBlogs.Core.Domain.ValueObjects.Verification.VerificationCodeObject.CreateForSignUp();
+            var verification = UserVerification.Create(code.Value, user.Id, string.Empty, user.Email);
+            
+            // Set the mode to EmailVerification using reflection since it's private
+            var verificationType = typeof(UserVerification);
+            var modeField = verificationType.GetField("Mode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            modeField?.SetValue(verification, VerificationMode.EmailVerification.ToString());
+            
+            await _verificationService.InsertVerificationAsync(verification, CancellationToken.None);
+        }
     }
 
-    public Task SetVerificationEmail(string email)
+    public async Task<string> ResetPassword(ResetPasswordInput input)
     {
-        throw new NotImplementedException();
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        if (string.IsNullOrWhiteSpace(input.Email) || 
+            string.IsNullOrWhiteSpace(input.ResetToken) || 
+            string.IsNullOrWhiteSpace(input.NewPassword))
+        {
+            throw new ArgumentException("Email, reset token, and new password are required");
+        }
+
+        var contactInfo = ContactInfo.CreateEmail(input.Email);
+        var verification = await _verificationService.FindActiveVerification(
+            contactInfo, VerificationMode.ForgotPassword);
+
+        if (verification == null)
+        {
+            throw new ArgumentException("No active password reset verification found");
+        }
+
+        if (!verification.VerifyToken(input.ResetToken))
+        {
+            throw new ArgumentException("Invalid or expired reset token");
+        }
+
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == Utils.NormalizeEmail(input.Email),
+            disableTracking: false);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var newPasswordHash = Utils.ComputeHash(input.NewPassword);
+        user.SetPassword(newPasswordHash);
+
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync();
+
+        return "Password reset successfully";
     }
 
-    public Task ValidateVerifyEmail(VerifyEmailInput input)
+    public async Task SetVerificationEmail(string email)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            throw new ArgumentException("Email is required");
+        }
+
+        var normalizedEmail = Utils.NormalizeEmail(email);
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == normalizedEmail,
+            disableTracking: false);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        user.VerifyEmail();
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync();
     }
 
-    public Task<ResetPasswordOutput> ValidResetPasswordCode(ValidateResetPasswordCodeInput input)
+    public async Task ValidateVerifyEmail(VerifyEmailInput input)
     {
-        throw new NotImplementedException();
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        if (string.IsNullOrWhiteSpace(input.Email) || string.IsNullOrWhiteSpace(input.VerifyCode))
+        {
+            throw new ArgumentException("Email and verification code are required");
+        }
+
+        var contactInfo = ContactInfo.CreateEmail(input.Email);
+        var verification = await _verificationService.FindActiveVerification(
+            contactInfo, VerificationMode.EmailVerification);
+
+        if (verification == null)
+        {
+            throw new ArgumentException("No active email verification found");
+        }
+
+        if (!verification.VerifyCode(input.VerifyCode))
+        {
+            throw new ArgumentException("Invalid or expired verification code");
+        }
+
+        // Mark email as verified
+        var user = await _userRepository.GetFirstOrDefaultAsync(
+            predicate: x => x.NormalizedEmail == Utils.NormalizeEmail(input.Email),
+            disableTracking: false);
+
+        if (user != null)
+        {
+            user.VerifyEmail();
+            _userRepository.Update(user);
+            await _unitOfWork.SaveChangesAsync();
+        }
+    }
+
+    public async Task<ResetPasswordOutput> ValidResetPasswordCode(ValidateResetPasswordCodeInput input)
+    {
+        if (input == null)
+        {
+            throw new ArgumentNullException(nameof(input));
+        }
+
+        if (string.IsNullOrWhiteSpace(input.Email) || string.IsNullOrWhiteSpace(input.ResetCode))
+        {
+            throw new ArgumentException("Email and reset code are required");
+        }
+
+        var contactInfo = ContactInfo.CreateEmail(input.Email);
+        var verification = await _verificationService.FindActiveVerification(
+            contactInfo, VerificationMode.ForgotPassword);
+
+        if (verification == null)
+        {
+            throw new ArgumentException("No active password reset verification found");
+        }
+
+        if (!verification.VerifyCode(input.ResetCode))
+        {
+            throw new ArgumentException("Invalid or expired reset code");
+        }
+
+        return new ResetPasswordOutput
+        {
+            Email = input.Email,
+            Token = verification.Token
+        };
+    }
+
+    private static UserDto MapToUserDto(User user)
+    {
+        return new UserDto
+        {
+            Id = (int)user.Id,
+            UserName = user.UserName,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            Active = true, // Assuming active by default
+            IsVerifiedEmail = user.IsVerifiedEmail,
+            IsVerifiedPhone = user.IsVerifiedPhone,
+            RegisterProvider = "Local", // Default provider
+            UserRoles = user.UserRoles.Select(ur => new UserRoleDto
+            {
+                Role = ur.Role != null ? new RoleDto
+                {
+                    Id = (int)ur.Role.Id,
+                    Name = ur.Role.Name,
+                    NormalizedName = ur.Role.NormalizedName
+                } : null
+            }).ToList(),
+            Avatar = user.Avatar != null ? new FileStorageDto
+            {
+                Id = user.Avatar.Id,
+                FileName = user.Avatar.FileName,
+                FileUniqueName = user.Avatar.FileUniqueName,
+                Size = user.Avatar.Size,
+                Type = user.Avatar.Type,
+                Path = user.Avatar.Path,
+                Extension = user.Avatar.Extension,
+                Status = (FileStorageStatus)user.Avatar.Status
+            } : null
+        };
     }
 }
