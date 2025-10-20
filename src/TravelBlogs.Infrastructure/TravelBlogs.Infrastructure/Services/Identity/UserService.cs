@@ -3,9 +3,7 @@ using TravelBlogs.Core.Application.Common.UnitOfWork;
 using TravelBlogs.Core.Application.Cqrs.Users.Commands;
 using TravelBlogs.Core.Application.Dto.Authorization.Accounts;
 using TravelBlogs.Core.Application.Dto.Authorization.Verification;
-using TravelBlogs.Core.Application.Dto.Authorization.Role;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.User;
-using TravelBlogs.Core.Application.Dto.Persistence.Catalog.FileStorages;
 using TravelBlogs.Core.Application.Interfaces.Services;
 using TravelBlogs.Core.Application.Utility;
 using TravelBlogs.Core.Domain.Entities.Identity;
@@ -13,7 +11,7 @@ using TravelBlogs.Core.Domain.ValueObjects.Verification;
 using TravelBlogs.Core.Domain.Events.Verification;
 using TravelBlogs.Core.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
-using TravelBlogs.Core.Domain.Common.Enums;
+using Mapster;
 
 namespace TravelBlogs.Infrastructure.Services.Identity;
 
@@ -34,18 +32,6 @@ public class UserService : IUserService
 
     public async Task<bool> ChangePassword(UpdatePasswordCommand request)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
-
-        if (string.IsNullOrWhiteSpace(request.CurrentPassword) || 
-            string.IsNullOrWhiteSpace(request.NewPassword) || 
-            string.IsNullOrWhiteSpace(request.ConfirmNewPassword))
-        {
-            throw new ArgumentException("All password fields are required");
-        }
-
         if (request.NewPassword != request.ConfirmNewPassword)
         {
             throw new ArgumentException("New password and confirmation password do not match");
@@ -77,16 +63,6 @@ public class UserService : IUserService
 
     public async Task ChangePasswordAsync(int userId, string password)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentException("Invalid user ID");
-        }
-
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            throw new ArgumentException("Password is required");
-        }
-
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == userId,
             disableTracking: false);
@@ -105,11 +81,6 @@ public class UserService : IUserService
 
     public async Task<CheckingItemExistModel> CheckEmailExisted(string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
-        {
-            return new CheckingItemExistModel(string.Empty);
-        }
-
         var normalizedEmail = Utils.NormalizeEmail(email);
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.NormalizedEmail == normalizedEmail,
@@ -131,16 +102,6 @@ public class UserService : IUserService
 
     public async Task<SendVerificationEmailOutputModel> ForgotPassword(SendPasswordResetCodeInput input)
     {
-        if (input == null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
-
-        if (string.IsNullOrWhiteSpace(input.EmailAddress))
-        {
-            throw new ArgumentException("Email address is required");
-        }
-
         var normalizedEmail = Utils.NormalizeEmail(input.EmailAddress);
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.NormalizedEmail == normalizedEmail,
@@ -208,16 +169,11 @@ public class UserService : IUserService
             throw new UnauthorizedAccessException("Invalid username or password");
         }
 
-        return MapToUserDto(user);
+        return user.Adapt<UserDto>();
     }
 
     public async Task<UserDto> GetUserByIdAsync(long userId)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentException("Invalid user ID");
-        }
-
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == userId,
             include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
@@ -228,7 +184,7 @@ public class UserService : IUserService
             throw new ArgumentException("User not found");
         }
 
-        return MapToUserDto(user);
+        return user.Adapt<UserDto>();
     }
 
     public async Task<UserDto> GetUserDetailById(long userId)
@@ -248,12 +204,12 @@ public class UserService : IUserService
             throw new ArgumentException("User not found");
         }
 
-        return MapToUserDto(user);
+        return user.Adapt<UserDto>();
     }
 
     public async Task<UserDto> GetUserEmailExisted(string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (!Utils.CheckEmailIsValid(email))
         {
             throw new ArgumentException("Email is required");
         }
@@ -269,23 +225,11 @@ public class UserService : IUserService
             throw new ArgumentException("User not found");
         }
 
-        return MapToUserDto(user);
+        return user.Adapt<UserDto>();
     }
 
     public async Task<UserDto> Register(RegisterAccountInput input)
     {
-        if (input == null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
-
-        if (string.IsNullOrWhiteSpace(input.Username) || 
-            string.IsNullOrWhiteSpace(input.Email) || 
-            string.IsNullOrWhiteSpace(input.Password))
-        {
-            throw new ArgumentException("Username, email, and password are required");
-        }
-
         var normalizedUsername = Utils.NormalizeUserName(input.Username);
         var normalizedEmail = Utils.NormalizeEmail(input.Email);
 
@@ -323,16 +267,11 @@ public class UserService : IUserService
             include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
             disableTracking: true);
 
-        return MapToUserDto(createdUser!);
+        return createdUser!.Adapt<UserDto>();
     }
 
     public async Task ResendVerificationEmail(int userId)
     {
-        if (userId <= 0)
-        {
-            throw new ArgumentException("Invalid user ID");
-        }
-
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == userId,
             disableTracking: true);
@@ -376,18 +315,6 @@ public class UserService : IUserService
 
     public async Task<string> ResetPassword(ResetPasswordInput input)
     {
-        if (input == null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
-
-        if (string.IsNullOrWhiteSpace(input.Email) || 
-            string.IsNullOrWhiteSpace(input.ResetToken) || 
-            string.IsNullOrWhiteSpace(input.NewPassword))
-        {
-            throw new ArgumentException("Email, reset token, and new password are required");
-        }
-
         var contactInfo = ContactInfo.CreateEmail(input.Email);
         var verification = await _verificationService.FindActiveVerification(
             contactInfo, VerificationMode.ForgotPassword);
@@ -422,7 +349,7 @@ public class UserService : IUserService
 
     public async Task SetVerificationEmail(string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if (!Utils.CheckEmailIsValid(email))
         {
             throw new ArgumentException("Email is required");
         }
@@ -449,7 +376,7 @@ public class UserService : IUserService
             throw new ArgumentNullException(nameof(input));
         }
 
-        if (string.IsNullOrWhiteSpace(input.Email) || string.IsNullOrWhiteSpace(input.VerifyCode))
+        if (!Utils.CheckEmailIsValid(input.Email) || string.IsNullOrWhiteSpace(input.VerifyCode))
         {
             throw new ArgumentException("Email and verification code are required");
         }
@@ -488,7 +415,7 @@ public class UserService : IUserService
             throw new ArgumentNullException(nameof(input));
         }
 
-        if (string.IsNullOrWhiteSpace(input.Email) || string.IsNullOrWhiteSpace(input.ResetCode))
+        if (!Utils.CheckEmailIsValid(input.Email) || string.IsNullOrWhiteSpace(input.ResetCode))
         {
             throw new ArgumentException("Email and reset code are required");
         }
@@ -511,43 +438,6 @@ public class UserService : IUserService
         {
             Email = input.Email,
             Token = verification.Token
-        };
-    }
-
-    private static UserDto MapToUserDto(User user)
-    {
-        return new UserDto
-        {
-            Id = (int)user.Id,
-            UserName = user.UserName,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            PhoneNumber = user.PhoneNumber,
-            Active = true, // Assuming active by default
-            IsVerifiedEmail = user.IsVerifiedEmail,
-            IsVerifiedPhone = user.IsVerifiedPhone,
-            RegisterProvider = "Local", // Default provider
-            UserRoles = user.UserRoles.Select(ur => new UserRoleDto
-            {
-                Role = ur.Role != null ? new RoleDto
-                {
-                    Id = (int)ur.Role.Id,
-                    Name = ur.Role.Name,
-                    NormalizedName = ur.Role.NormalizedName
-                } : null
-            }).ToList(),
-            Avatar = user.Avatar != null ? new FileStorageDto
-            {
-                Id = user.Avatar.Id,
-                FileName = user.Avatar.FileName,
-                FileUniqueName = user.Avatar.FileUniqueName,
-                Size = user.Avatar.Size,
-                Type = user.Avatar.Type,
-                Path = user.Avatar.Path,
-                Extension = user.Avatar.Extension,
-                Status = (FileStorageStatus)user.Avatar.Status
-            } : null
         };
     }
 }
