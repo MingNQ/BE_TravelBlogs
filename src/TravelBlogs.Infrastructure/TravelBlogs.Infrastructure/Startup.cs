@@ -30,7 +30,7 @@ public static class Startup
             .AddPersistences()
             .AddRouting(options => options.LowercaseUrls = true)
             .AddServices()
-            .AddExternalService()
+            .AddExternalService(config)
             .AddRegisterService();
     }
 

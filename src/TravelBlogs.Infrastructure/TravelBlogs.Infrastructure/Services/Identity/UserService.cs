@@ -161,7 +161,7 @@ public class UserService : IUserService
 
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.NormalizedUserName == normalizedUsername || x.NormalizedEmail == normalizedUsername,
-            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar!),
             disableTracking: false);
 
         if (user == null || user.PasswordHash != passwordHash)
@@ -176,7 +176,7 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == userId,
-            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar!),
             disableTracking: true);
 
         if (user == null)
@@ -196,7 +196,7 @@ public class UserService : IUserService
 
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == userId,
-            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar!),
             disableTracking: true);
 
         if (user == null)
@@ -217,7 +217,7 @@ public class UserService : IUserService
         var normalizedEmail = Utils.NormalizeEmail(email);
         var user = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.NormalizedEmail == normalizedEmail,
-            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar!),
             disableTracking: true);
 
         if (user == null)
@@ -264,7 +264,7 @@ public class UserService : IUserService
         // Get the created user with roles and avatar
         var createdUser = await _userRepository.GetFirstOrDefaultAsync(
             predicate: x => x.Id == user.Id,
-            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar),
+            include: x => x.Include(u => u.UserRoles).ThenInclude(ur => ur.Role).Include(u => u.Avatar!),
             disableTracking: true);
 
         return createdUser!.Adapt<UserDto>();
