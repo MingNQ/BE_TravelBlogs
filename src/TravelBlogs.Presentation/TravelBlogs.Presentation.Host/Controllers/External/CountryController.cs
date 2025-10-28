@@ -21,6 +21,6 @@ public class CountryController : BaseNoAuthController
     public async Task<IActionResult> GetDestinationsByCountryAsync(long countryId)
     {
         var result = await Mediator.Send(new GetDestinationByCountryIdQuery(countryId));
-        return Ok(result, MessageCommon.GetDataSuccess);
+        return Ok(result);
     }
 }

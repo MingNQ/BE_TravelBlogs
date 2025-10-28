@@ -5,4 +5,4 @@ using TravelBlogs.Core.Domain.Entities.Geo;
 
 namespace TravelBlogs.Core.Application.Cqrs.Geo.Specs;
 
-public class CountryByConditionSpec(SearchCountryParam param) : BaseSpec<Country, CountryDto>(param);
+public class CountryByConditionSpec(SearchCountryParam param) : BaseSpec<Country, CountryInfo>(param);

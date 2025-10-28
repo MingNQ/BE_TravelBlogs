@@ -22,6 +22,6 @@ public class CountryController : BaseAdminAuthController
     public IActionResult GetDestinationsByCountryAsync(long countryId)
     {
         var result = Mediator.Send(new GetDestinationByCountryIdQuery(countryId));
-        return Ok(result, MessageCommon.GetDataSuccess);
+        return Ok(result);
     }
 }

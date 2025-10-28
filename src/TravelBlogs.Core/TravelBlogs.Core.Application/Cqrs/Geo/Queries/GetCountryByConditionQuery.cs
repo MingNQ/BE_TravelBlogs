@@ -9,14 +9,14 @@ using TravelBlogs.Core.Domain.Entities.Geo;
 
 namespace TravelBlogs.Core.Application.Cqrs.Geo.Queries;
 
-public class GetCountryByConditionQuery : SearchCountryParam, IRequest<PaginationResponse<CountryDto>>;
+public class GetCountryByConditionQuery : SearchCountryParam, IRequest<PaginationResponse<CountryInfo>>;
 
 public class GetCountryByConditionQueryHandler(
     IReadRepository<Country> countryRepository,
     IPaginationService paginationService)
-    : IRequestHandler<GetCountryByConditionQuery, PaginationResponse<CountryDto>>
+    : IRequestHandler<GetCountryByConditionQuery, PaginationResponse<CountryInfo>>
 {
-    public async Task<PaginationResponse<CountryDto>> Handle(GetCountryByConditionQuery request, CancellationToken cancellationToken)
+    public async Task<PaginationResponse<CountryInfo>> Handle(GetCountryByConditionQuery request, CancellationToken cancellationToken)
     {
         var spec = new CountryByConditionSpec(request);
         var result = await paginationService.PaginatedListAsync(
