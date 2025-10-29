@@ -3,8 +3,9 @@ namespace TravelBlogs.Core.Domain.Common.Enums;
 public enum BlogStatusEnum //trạng thái xét duyệt của bài blog.
 {
     InReview = 1, //đang xem xét
-    Approve = 2, //đã phê duyệt
-    Reject = 3 //từ chối
+    Approved = 2, //đã phê duyệt
+    Rejected = 3, //từ chối
+    Cancelled = 4
 }
 
 public enum FeedbackTypeEnum //loại phản hồi

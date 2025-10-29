@@ -18,11 +18,15 @@ public class Blog : AuditableEntity<long>
     public long CategoryId { get; private set; }
     public long DestinationId { get; private set; }
     public long? ThumbnailId { get; private set; }
+    public long? ApproverId { get; private set; }
+    public long? RejectorId { get; private set; }
     private readonly List<Feedback> _feedbacks = [];
     public IReadOnlyCollection<Feedback> Feedbacks => _feedbacks.AsReadOnly();
     private readonly List<Comment> _comments = [];
     public IReadOnlyCollection<Comment> Comments => _comments.AsReadOnly();
     public virtual User? Author { get; set; }
+    public virtual User? Approver { get; set; }
+    public virtual User? Rejector { get; set; }
     public virtual Category? Category { get; set; }
     public virtual Destination? Destination { get; set; }
     public virtual FileStorage? Thumbnail { get; set; }
@@ -80,5 +84,28 @@ public class Blog : AuditableEntity<long>
     public void UpdateRating(float rating)
     {
         Rating = rating;
+    }
+
+    public void Approve(long? approverId)
+    {
+        if (Status == BlogStatusEnum.InReview)
+        {
+            Status = BlogStatusEnum.Approved;
+            ApproverId = approverId;
+        }
+    }
+
+    public void Reject(long? rejectorId)
+    {
+        if (Status == BlogStatusEnum.InReview)
+        {
+            Status = BlogStatusEnum.Rejected;
+            RejectorId = rejectorId;
+        }
+    }
+
+    public void Cancel()
+    {
+        Status = BlogStatusEnum.Cancelled;
     }
 }

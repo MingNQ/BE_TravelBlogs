@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TravelBlogs.Core.Application.Common.Services;
 using TravelBlogs.Core.Application.Interfaces.Services;
 using TravelBlogs.Infrastructure.Auth.Authorization;
+using TravelBlogs.Infrastructure.Services.Catalog;
 using TravelBlogs.Infrastructure.Services.Identity;
 
 namespace TravelBlogs.Infrastructure.Services;
@@ -19,6 +20,8 @@ public static class Startup
 
         services.AddTransient<IFilePathService, FilePathService>();
         services.AddTransient<IFileStorageService, FileStorageService>();
+
+        services.AddTransient<IBlogRequestService, BlogRequestService>();
 
         return services;
     }

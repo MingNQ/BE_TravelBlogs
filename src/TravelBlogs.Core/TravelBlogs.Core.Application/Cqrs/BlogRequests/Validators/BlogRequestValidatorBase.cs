@@ -1,11 +1,11 @@
 using FluentValidation;
-using TravelBlogs.Core.Application.Cqrs.Blogs.Commands;
+using TravelBlogs.Core.Application.Cqrs.BlogRequests.Commands;
 
-namespace TravelBlogs.Core.Application.Cqrs.Blogs.Validators;
+namespace TravelBlogs.Core.Application.Cqrs.BlogRequests.Validators;
 
-public class BlogValidatorBase<T> : AbstractValidator<T> where T : BlogCommand
+public class BlogRequestValidatorBase<T> : AbstractValidator<T> where T : BlogRequestBaseCommand
 {
-    public BlogValidatorBase()
+    public BlogRequestValidatorBase()
     {
         RuleFor(x => x.Title)
             .NotEmpty()
