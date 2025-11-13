@@ -1,0 +1,68 @@
+using System.Collections.Concurrent;
+using System.Text;
+using Microsoft.Extensions.Options;
+using TravelBlogs.Core.Application.Configurations;
+using TravelBlogs.Core.Application.Interfaces.Infrastructures.Integrates.Email;
+
+namespace TravelBlogs.Infrastructure.ExternalService.Email;
+
+public class EmailTemplateProvider(IOptions<AppSettings> applicationInfoConfiguration) : IEmailTemplateProvider
+{
+    private const string NAME_SPACE = "TravelBlogs.Infrastructure.ExternalService.Email.EmailTemplates";
+
+    private readonly AppSettings _applicationInfoSettings = applicationInfoConfiguration.Value;
+    private readonly ConcurrentDictionary<string, string> _defaultTemplates = new();
+
+    public string GetTemplateByName(string name, string languageCode = "en")
+    {
+        return _defaultTemplates.GetOrAdd($"{name}_{languageCode}", _ =>
+        {
+            var assembly = typeof(EmailTemplateProvider).Assembly;
+            using var stream = assembly.GetManifestResourceStream($"{NAME_SPACE}.{languageCode}.{name}.html");
+            byte[] bytes;
+
+            using (var streamReader = new MemoryStream())
+            {
+                stream?.CopyTo(streamReader);
+                bytes = streamReader.ToArray();
+            }
+
+            string template = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            return GetApplicationInfoAsync(template);
+        });
+    }
+
+    public async Task<string> GetTemplateByNameAsync(string name, string languageCode = "en")
+    {
+        var assembly = typeof(EmailTemplateProvider).Assembly;
+        await using var stream = assembly.GetManifestResourceStream($"{NAME_SPACE}.{languageCode}.{name}.html");
+        byte[] bytes;
+
+        using (var streamReader = new MemoryStream())
+        {
+            stream?.CopyTo(streamReader);
+            bytes = streamReader.ToArray();
+        }
+
+        string template = Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+        return GetApplicationInfoAsync(template);
+    }
+
+    private string GetApplicationInfoAsync(string template)
+    {
+        template = template.Replace("{{CurrentYear}}", DateTime.Now.Year.ToString());
+
+        template = template.Replace("{{LogoURL}}", "");
+        template = template.Replace("{{AppName}}", _applicationInfoSettings.Name);
+        template = template.Replace("{{SupportEmail}}", _applicationInfoSettings.Email);
+        template = template.Replace("{{WEBSITE_URL}}", _applicationInfoSettings.ClientRootAddress);
+        template = template.Replace("{{ADDRESS}}", _applicationInfoSettings.Address);
+        template = template.Replace("{{PHONE_NUMBER}}", _applicationInfoSettings.Phone);
+        template = template.Replace("{{COPYRIGHT}}", $"© {DateTime.Now.Year} {_applicationInfoSettings.Name}. All Rights Reserved.");
+
+        // Keep existing application info replacements for backward compatibility
+        template = template.Replace("{{APPLICATION_SITE}}", _applicationInfoSettings.ServerRootAddress);
+
+        return template;
+    }
+}

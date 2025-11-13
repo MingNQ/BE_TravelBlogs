@@ -4,7 +4,10 @@ using TravelBlogs.Core.Application.Interfaces.Integrates;
 
 namespace TravelBlogs.Infrastructure.Services.Integrates;
 
-public class EmailService(IExternalEnpointClient emailSender) : IEmailService
+public class EmailService(
+    IExternalEnpointClient emailSender,
+    IEmailTemplateProvider emailTemplateProvider) 
+    : IEmailService
 {
     public Task ChangePasswordSuccessfullyAsync(string emailAddress, string fullName, string language)
     {
@@ -21,9 +24,18 @@ public class EmailService(IExternalEnpointClient emailSender) : IEmailService
         throw new NotImplementedException();
     }
 
-    public Task SendVerificationEmailVerify(SendVerificationByEmailInput input, string language)
+    public async Task SendVerificationEmailVerify(SendVerificationByEmailInput input, string language)
     {
-        throw new NotImplementedException();
+        string emailTemplate = await emailTemplateProvider.GetTemplateByNameAsync("verifyemail", language); 
+
+        if (!string.IsNullOrEmpty(input.Code))
+        {
+            emailTemplate = emailTemplate.Replace("{{UserName}}", input.UserName);
+            emailTemplate = emailTemplate.Replace("{{OTP_CODE}}", input.Code);
+            emailTemplate = emailTemplate.Replace("{{EMAIL}}", input.Email);
+        }
+
+        await ReplaceBodyAndSend(input.Email, "EMAIL_VERIFICATION", emailTemplate);
     }
 
     public Task SendVerificationEmailVerifyLinkOnly(SendVerificationByEmailInput input, string language)

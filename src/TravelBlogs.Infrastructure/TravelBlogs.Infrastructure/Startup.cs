@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TravelBlogs.Core.Application.Common;
+using TravelBlogs.Core.Application.Configurations;
 using TravelBlogs.Infrastructure.Auth;
 using TravelBlogs.Infrastructure.Cors;
 using TravelBlogs.Infrastructure.ExternalService;
@@ -21,6 +22,7 @@ public static class Startup
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
         return services
+            .AddSettings()
             .AddApiVersioning()
             .AddAuth(config)
             .AddUnitOfWork<ApplicationDbContext>()
@@ -49,6 +51,14 @@ public static class Startup
         });
 
         service.AddEndpointsApiExplorer();
+        return service;
+    }
+
+    private static IServiceCollection AddSettings(this IServiceCollection service)
+    {
+        service.AddOptions<AppSettings>()
+            .BindConfiguration($"{nameof(AppSettings)}");
+
         return service;
     }
 
