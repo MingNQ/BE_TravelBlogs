@@ -81,7 +81,7 @@ public class InitiateSignUpCommandHandler(
         var existVerification = await verificationService.FindActiveVerification(contact, VerificationMode.SignUp);
         if (existVerification is not { IsValid: true })
         {
-            var verification = UserVerification.CreateForSignUp(contact);
+            var verification = UserVerification.CreateForSignUp(contact, user.Id);
 
             await verificationService.InsertVerificationAsync(verification, cancellationToken);
 
@@ -278,7 +278,7 @@ public class ResendSignUpOtpCommandHandler(
             verification.GetVerificationCode());
 
         await eventPublisher.PublishAsync(verificationEvent);
-        
+
         return new ResendSignUpOtpResponse
         {
             IsSent = true,

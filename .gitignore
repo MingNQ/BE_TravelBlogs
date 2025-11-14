@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Secret
+appsettings.Local.json
+
 # Limit upload local static (for test-only)
 wwwroot
 

@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Email\EmailTemplates\en\verifyemail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Email\EmailTemplates\en\verifyemail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\TravelBlogs.Core\TravelBlogs.Core.Application\TravelBlogs.Core.Application.csproj" />
   </ItemGroup>
 
