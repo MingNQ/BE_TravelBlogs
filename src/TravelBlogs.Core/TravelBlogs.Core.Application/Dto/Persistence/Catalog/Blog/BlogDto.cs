@@ -1,6 +1,9 @@
 using TravelBlogs.Core.Application.Common.Interfaces;
 using TravelBlogs.Core.Application.Dto.Integrates.Geo;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Categories;
+using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Comment;
+using TravelBlogs.Core.Application.Dto.Persistence.Catalog.FileStorages;
+using TravelBlogs.Core.Application.Dto.Persistence.Catalog.User;
 using TravelBlogs.Core.Domain.Common.Enums;
 
 namespace TravelBlogs.Core.Application.Dto.Persistence.Catalog.Blog;
@@ -19,8 +22,11 @@ public class BlogDto : IDto
     public long DestinationId { get; set; }
     public long ThumbnailId { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
+    public List<CommentDto> Comments { get; set; } = [];
+    public SortUserInfo? Author { get; set; }
     public CategoryDto? Category { get; set; }
     public DestinationDto? Destination { get; set; }
+    public FileStorageDto? Thumbnail { get; set; }
 }
 
 public class CreateExternalBlogResponse

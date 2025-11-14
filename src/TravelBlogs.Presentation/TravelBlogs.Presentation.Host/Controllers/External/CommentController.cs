@@ -10,9 +10,10 @@ namespace TravelBlogs.Presentation.Host.Controllers.External;
 [Tags("External|Comment")]
 public class CommentController : BaseAuthController
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateAsync(CreateCommentCommand request)
+    [HttpPost("{blogId:long}")]
+    public async Task<IActionResult> CreateAsync(long blogId, CreateCommentCommand request)
     {
+        request.SetBlogId(blogId);
         var result = await Mediator.Send(request);
         return Ok(result, MessageCommon.GetDataSuccess);
     }
