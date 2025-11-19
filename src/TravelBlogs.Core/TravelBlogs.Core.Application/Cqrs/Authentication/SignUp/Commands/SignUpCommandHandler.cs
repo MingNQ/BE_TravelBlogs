@@ -202,7 +202,8 @@ public class VerifySignUpContactCommandHandler(
             throw new Exception("Invalid or expired verification code.");
         }
 
-        await verificationService.UpdateVerificationAsync(verification);
+        verification.MarkAsUsed();
+        _verificationRepository.Update(verification);
 
         var user = await _userRepository.GetFirstOrDefaultAsync(
                 predicate: u => contact.IsEmail
@@ -231,7 +232,8 @@ public class VerifySignUpContactCommandHandler(
         userDto.IsEmailVerified = contact.IsEmail;
         userDto.IsPhoneVerified = contact.IsPhone;
 
-        await verificationService.DeleteVerificationAsync(verification.Id);
+        _verificationRepository.Delete(verification);
+        await unitOfWork.SaveChangesAsync();
 
         var responseToken = await tokenService.GetTokenAsync(user.Id, false, request.IpAddress ?? "N/A", cancellationToken);
 

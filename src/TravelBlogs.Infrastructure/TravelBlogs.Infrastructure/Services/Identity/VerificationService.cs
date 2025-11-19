@@ -88,8 +88,9 @@ public class VerificationService(IUnitOfWork unitOfWork)
     public async Task DeleteVerificationAsync(long verificationId)
     {
         var verification = await _verificationRepository.GetFirstOrDefaultAsync(
-            predicate: x => x.Id == verificationId);
-        
+            predicate: x => x.Id == verificationId,
+            disableTracking: true);
+
         if (verification != null)
         {
             _verificationRepository.Delete(verification);

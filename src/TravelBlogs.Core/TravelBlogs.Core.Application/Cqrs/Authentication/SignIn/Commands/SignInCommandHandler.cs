@@ -144,13 +144,13 @@ public class VerifySignInOtpCommandHandler(
 
         verification.MarkAsUsed();
         _verificationRepository.Update(verification);
-        await unitOfWork.SaveChangesAsync();
 
         var userDto = user.Adapt<UserProfileDto>();
         userDto.IsEmailVerified = user.IsVerifiedEmail ?? false;
         userDto.IsPhoneVerified = user.IsVerifiedPhone ?? false;
 
-        await verificationService.DeleteVerificationAsync(verification.Id);
+        _verificationRepository.Delete(verification);
+        await unitOfWork.SaveChangesAsync();
 
         var tokenResponse = await tokenService.GetTokenAsync(user.Id, request.RememberMe, request.IpAddress, cancellationToken);
 
