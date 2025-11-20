@@ -13,7 +13,8 @@ public class GetBlogRequestByConditionQuery : SearchBlogRequestParam, IRequest<P
 
 public class GetBlogRequestByConditionQueryHandler(
     IReadRepository<Blog> blogRepository,
-    IPaginationService paginationService)
+    IPaginationService paginationService,
+    IFilePathService filePathService)
     : IRequestHandler<GetBlogRequestByConditionQuery, PaginationResponse<BlogDto>>
 {
     public async Task<PaginationResponse<BlogDto>> Handle(GetBlogRequestByConditionQuery request, CancellationToken cancellationToken)
@@ -26,6 +27,14 @@ public class GetBlogRequestByConditionQueryHandler(
             request.PageSize,
             cancellationToken
         );
+
+        foreach (var blog in result.Data)
+        {
+            if (blog.Thumbnail != null)
+            {
+                filePathService.BindFullPaths(blog.Thumbnail);
+            }
+        }
 
         return result;
     }

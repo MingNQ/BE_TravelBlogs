@@ -15,5 +15,7 @@ public sealed class BlogRequestByIdSpec : Specification<Blog, BlogDto>
         Query.Include(x => x.Category);
 
         Query.Include(x => x.Destination);
+
+        Query.Include(x => x.Thumbnail);
     }
 }

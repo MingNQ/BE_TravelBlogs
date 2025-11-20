@@ -4,7 +4,7 @@ using TravelBlogs.Core.Domain.Entities.Catalog;
 
 namespace TravelBlogs.Core.Application.Cqrs.Blogs.Specs;
 
-public class BlogByIdSpec : Specification<Blog, BlogDto>
+public sealed class BlogByIdSpec : Specification<Blog, BlogDto>
 {
     public BlogByIdSpec(long id)
     {

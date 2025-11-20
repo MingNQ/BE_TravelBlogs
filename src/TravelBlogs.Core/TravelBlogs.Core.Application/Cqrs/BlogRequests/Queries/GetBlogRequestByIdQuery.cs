@@ -1,7 +1,7 @@
-using Mapster;
 using MediatR;
 using TravelBlogs.Core.Application.Common.Exceptions;
 using TravelBlogs.Core.Application.Common.Persistences;
+using TravelBlogs.Core.Application.Common.Services;
 using TravelBlogs.Core.Application.Cqrs.BlogRequests.Specs;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Blog;
 using TravelBlogs.Core.Domain.Entities.Catalog;
@@ -15,7 +15,8 @@ public class GetBlogRequestByIdQuery : IRequest<BlogDto>
 }
 
 public class GetBlogRequestByIdQueryHandler(
-    IReadRepository<Blog> blogRepository)
+    IReadRepository<Blog> blogRepository,
+    IFilePathService filePathService)
     : IRequestHandler<GetBlogRequestByIdQuery, BlogDto>
 {
     public async Task<BlogDto> Handle(GetBlogRequestByIdQuery request, CancellationToken cancellationToken)
@@ -23,6 +24,11 @@ public class GetBlogRequestByIdQueryHandler(
         var spec = new BlogRequestByIdSpec(request.BlogId);
         var blog = await blogRepository.FirstOrDefaultAsync(spec, cancellationToken)
             ?? throw new NotFoundException(MessageCommon.SetEntityNotFound(nameof(Blog), request.BlogId));
+
+        if (blog.Thumbnail != null)
+        {
+            filePathService.BindFullPaths(blog.Thumbnail);
+        }
         return blog;
     }
 }
