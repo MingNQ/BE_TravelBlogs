@@ -27,7 +27,7 @@ public class BlogRequestController : BaseAuthController
         return Ok(result, MessageCommon.GetDataSuccess);
     }
 
-    [HttpPost("my/{id:long}")]
+    [HttpGet("my/{id:long}")]
     public async Task<IActionResult> GetBlogRequestByIdAsync(long id)
     {
         var result = await Mediator.Send(new GetBlogRequestByIdQuery
