@@ -1,4 +1,5 @@
 using MediatR;
+using TravelBlogs.Core.Application.Common.Interfaces;
 using TravelBlogs.Core.Application.Common.Models;
 using TravelBlogs.Core.Application.Common.Persistences;
 using TravelBlogs.Core.Application.Common.Services;
@@ -14,12 +15,13 @@ public class GetBlogRequestByConditionQuery : SearchBlogRequestParam, IRequest<P
 public class GetBlogRequestByConditionQueryHandler(
     IReadRepository<Blog> blogRepository,
     IPaginationService paginationService,
-    IFilePathService filePathService)
+    IFilePathService filePathService,
+    ICurrentUser currentUser)
     : IRequestHandler<GetBlogRequestByConditionQuery, PaginationResponse<BlogDto>>
 {
     public async Task<PaginationResponse<BlogDto>> Handle(GetBlogRequestByConditionQuery request, CancellationToken cancellationToken)
     {
-        var spec = new BlogRequestByConditionSpec(request);
+        var spec = new BlogRequestByConditionSpec(currentUser.UserId, request);
         var result = await paginationService.PaginatedListAsync(
             blogRepository,
             spec,

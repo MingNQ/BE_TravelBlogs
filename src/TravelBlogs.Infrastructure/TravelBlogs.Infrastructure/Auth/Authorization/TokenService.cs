@@ -205,13 +205,15 @@ public class TokenService : ITokenService
         try
         {
             // Copy validation parameters to disable lifetime validation temporarily
-            var tokenValidationParametersWithoutLifetime = _tokenValidationParameters.Clone();
-            tokenValidationParametersWithoutLifetime.ValidateLifetime = false;
+            var tokenValidationParameters = _tokenValidationParameters.Clone();
+            tokenValidationParameters.ValidateLifetime = false;
+            tokenValidationParameters.ValidateAudience = false;
+            tokenValidationParameters.ValidateIssuer = false;
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(
                 token,
-                tokenValidationParametersWithoutLifetime,
+                tokenValidationParameters,
                 out var securityToken);
 
             if (securityToken is not JwtSecurityToken jwtSecurityToken ||
