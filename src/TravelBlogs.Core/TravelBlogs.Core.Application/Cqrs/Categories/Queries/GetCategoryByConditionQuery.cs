@@ -26,6 +26,13 @@ public class GetCategoryByConditionQueryHandler(
             request.PageSize,
             cancellationToken);
 
-        return result;
+        var data = result.Data.Select(x => new CategoryDto()
+        {
+            Id = x.Id,
+            Name = x.Name,
+            NumberOfPosts = x.Blogs.Count
+        }).ToList();
+
+        return new PaginationResponse<CategoryDto>(data, result.TotalCount, result.CurrentPage, result.PageSize);
     }
 }

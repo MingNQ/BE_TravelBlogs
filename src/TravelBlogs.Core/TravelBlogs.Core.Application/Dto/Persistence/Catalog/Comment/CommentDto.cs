@@ -1,4 +1,5 @@
 using TravelBlogs.Core.Application.Common.Interfaces;
+using TravelBlogs.Core.Application.Dto.Persistence.Catalog.Blog;
 using TravelBlogs.Core.Application.Dto.Persistence.Catalog.User;
 
 namespace TravelBlogs.Core.Application.Dto.Persistence.Catalog.Comment;
@@ -12,5 +13,6 @@ public class CommentDto : IDto
     public long? ParentCommentId { get; set; }
     public DateTimeOffset CreatedOn { get; set; }
     public DateTimeOffset? LastModifiedOn { get; set; }
+    public ShortBlogInfoDto? Blog { get; set; }
     public SortUserInfo? User { get; set; }
 }

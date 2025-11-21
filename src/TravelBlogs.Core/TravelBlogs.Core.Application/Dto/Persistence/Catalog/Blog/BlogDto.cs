@@ -29,6 +29,21 @@ public class BlogDto : IDto
     public FileStorageDto? Thumbnail { get; set; }
 }
 
+public class ShortBlogInfoDto
+{
+    public long Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public float Rating { get; set; }
+    public BlogStatusEnum Status { get; set; }
+    public long AuthorId { get; set; }
+    public long CategoryId { get; set; }
+    public long DestinationId { get; set; }
+    public SortUserInfo? Author { get; set; }
+    public CategoryDto? Category { get; set; }
+    public DestinationDto? Destination { get; set; }
+}
+
 public class CreateExternalBlogResponse
 {
     public long Id { get; set; }
