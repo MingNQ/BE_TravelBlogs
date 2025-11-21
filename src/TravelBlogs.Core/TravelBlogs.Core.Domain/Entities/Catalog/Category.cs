@@ -5,6 +5,7 @@ namespace TravelBlogs.Core.Domain.Entities.Catalog;
 public class Category : AuditableEntity<long>
 {
     public string Name { get; private set; } = string.Empty;
+    public virtual List<Blog> Blogs { get; private set; } = [];
 
     public static Category Create(string name)
     {

@@ -10,10 +10,17 @@ namespace TravelBlogs.Presentation.Host.Controllers.External;
 [Tags("External|Category")]
 public class CategoryController : BaseNoAuthController
 {
-	[HttpGet]
-	public async Task<IActionResult> GetAsync()
-	{
-		var result = await Mediator.Send(new GetCategoryForExternalQuery());
-		return Ok(result, MessageCommon.GetDataSuccess);
-	}
+    [HttpGet]
+    public async Task<IActionResult> GetAsync()
+    {
+        var result = await Mediator.Send(new GetCategoryForExternalQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
+
+    [HttpGet("has-blog")]
+    public async Task<IActionResult> GetCategoryHasBlogAsync()
+    {
+        var result = await Mediator.Send(new GetCategoryHasBlogQuery());
+        return Ok(result, MessageCommon.GetDataSuccess);
+    }
 }

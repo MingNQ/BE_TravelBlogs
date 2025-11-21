@@ -1,4 +1,5 @@
 using TravelBlogs.Core.Application.Common.Interfaces;
+using TravelBlogs.Core.Domain.Entities.Catalog;
 
 namespace TravelBlogs.Core.Application.Dto.Integrates.Catalog;
 
