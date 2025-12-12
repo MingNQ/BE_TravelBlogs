@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using TravelBlogs.Core.Application.Cqrs.Geo.Queries;
@@ -19,9 +18,9 @@ public class CountryController : BaseAdminAuthController
     }
 
     [HttpGet("{countryId:long}/destinations")]
-    public IActionResult GetDestinationsByCountryAsync(long countryId)
+    public async Task<IActionResult> GetDestinationsByCountryAsync(long countryId)
     {
-        var result = Mediator.Send(new GetDestinationByCountryIdQuery(countryId));
-        return Ok(result);
+        var result = await Mediator.Send(new GetDestinationByCountryIdQuery(countryId));
+        return Ok(result, MessageCommon.GetDataSuccess);
     }
 }
